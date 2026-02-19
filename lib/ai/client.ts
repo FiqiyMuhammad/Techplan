@@ -12,6 +12,10 @@ const PROVIDERS = {
   groq: {
     url: "https://api.groq.com/openai/v1/chat/completions",
     key: process.env.GROQ_API_KEY,
+  },
+  google: {
+    url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+    key: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   }
 };
 
@@ -20,31 +24,41 @@ export async function callAI(
   model: string = "google/gemini-2.0-flash-001",
   fallbackModel: string = "openai/gpt-4o-mini"
 ) {
-  // First attempt with primary model
-  try {
-    return await executeCall(messages, model, "openrouter");
-  } catch {
-    console.warn(`Primary model (${model}) failed, trying fallback (${fallbackModel})...`);
-    
-    // Attempt with fallback model on OpenRouter
+  // --- ATTEMPT 1: OpenRouter (Primary) ---
+  if (PROVIDERS.openrouter.key) {
+    try {
+      return await executeCall(messages, model, "openrouter");
+    } catch (e) {
+      console.warn(`[AI] OpenRouter Primary (${model}) failed:`, e);
+    }
+
+    // --- ATTEMPT 2: OpenRouter (Fallback Model) ---
     try {
       return await executeCall(messages, fallbackModel, "openrouter");
-    } catch (openrouterFallbackError) {
-      console.warn(`OpenRouter fallback (${fallbackModel}) failed, checking Groq...`);
-      
-      // Final attempt with Groq if key exists
-      if (PROVIDERS.groq.key) {
-        try {
-          return await executeCall(messages, "llama-3.3-70b-versatile", "groq");
-        } catch (groqError) {
-          console.error("Groq AI Error:", groqError);
-          throw new Error("All AI models (Primary, Secondary, and Groq) failed.");
-        }
-      }
-      
-      throw new Error(`AI Request failed: ${openrouterFallbackError instanceof Error ? openrouterFallbackError.message : "Reason unknown"}`);
+    } catch (e) {
+      console.warn(`[AI] OpenRouter Fallback (${fallbackModel}) failed:`, e);
     }
   }
+
+  // --- ATTEMPT 3: Google Gemini (Direct) ---
+  if (PROVIDERS.google.key) {
+    try {
+      return await executeCall(messages, "gemini-1.5-flash", "google");
+    } catch (e) {
+      console.warn(`[AI] Google Gemini Direct failed:`, e);
+    }
+  }
+
+  // --- ATTEMPT 4: Groq (Final Fallback) ---
+  if (PROVIDERS.groq.key) {
+    try {
+      return await executeCall(messages, "llama-3.3-70b-versatile", "groq");
+    } catch (e) {
+      console.error("[AI] Groq Final Error:", e);
+    }
+  }
+
+  throw new Error("All AI providers and fallbacks failed. Please check your API keys.");
 }
 
 async function executeCall(messages: Message[], model: string, providerKey: keyof typeof PROVIDERS) {
@@ -66,14 +80,19 @@ async function executeCall(messages: Message[], model: string, providerKey: keyo
       model: model,
       messages: messages,
       temperature: 0.7,
+      max_tokens: 4000,
     }),
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error?.message || `Failed to call ${providerKey} API`);
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error?.message || `Failed to call ${providerKey} API (Status: ${response.status})`);
   }
 
   const data = await response.json();
+  if (!data.choices?.[0]?.message?.content) {
+    throw new Error(`Invalid response format from ${providerKey}`);
+  }
+
   return data.choices[0].message.content;
 }
