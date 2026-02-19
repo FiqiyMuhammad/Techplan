@@ -38,6 +38,10 @@ export const auth = betterAuth({
      }
   },
   plugins: [
-    nextCookies(), // Important for cookie management in Next 15/16
+    nextCookies(),
+  ],
+  trustedOrigins: [
+    "http://localhost:3000",
+    "https://techplan-seven.vercel.app"
   ]
 });

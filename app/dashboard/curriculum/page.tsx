@@ -206,14 +206,15 @@ export default function CurriculumPage() {
           }
         }
       });
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/jpeg", 0.75); // Use JPEG with 75% quality
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "px",
-        format: [canvas.width / 2, canvas.height / 2]
+        format: [canvas.width / 2, canvas.height / 2],
+        compress: true // Enable PDF compression
       });
       
-      pdf.addImage(imgData, "PNG", 0, 0, canvas.width / 2, canvas.height / 2);
+      pdf.addImage(imgData, "JPEG", 0, 0, canvas.width / 2, canvas.height / 2, undefined, 'FAST');
       pdf.save(`curriculum-${Date.now()}.pdf`);
       toast.success("PDF Downloaded", { id: toastId });
     } catch (error) {
