@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -35,8 +36,8 @@ export default function SignUpPage() {
        ...( { firstName, lastName } as any )
     }, {
         onSuccess: () => {
-             // Successful registration redirect to dashboard (or onboarding)
-             router.push("/dashboard");
+             toast.success("Account created successfully! Please sign in.");
+             router.push("/sign-in");
         },
         onError: (ctx) => {
             console.error("Sign up error:", ctx);

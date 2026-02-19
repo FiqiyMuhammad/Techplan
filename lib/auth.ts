@@ -39,7 +39,5 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(), // Important for cookie management in Next 15/16
-  ],
-  // Let better-auth handle ID generation for all tables
-
+  ]
 });
