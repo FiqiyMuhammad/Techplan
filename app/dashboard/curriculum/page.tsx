@@ -23,6 +23,13 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useRef } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -47,6 +54,7 @@ export default function CurriculumPage() {
   const [currentCurriculum, setCurrentCurriculum] = useState("");
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [contextMode, setContextMode] = useState<ContextMode>("academic");
+  const [selectedProvider, setSelectedProvider] = useState<"google" | "groq" | "openrouter">("google");
   const docRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,7 +78,13 @@ export default function CurriculumPage() {
     setIsGenerating(true);
     
     try {
-        const result = await generateCurriculum(activePrompt, chatHistory);
+        const result = await generateCurriculum(
+            activePrompt, 
+            chatHistory, 
+            selectedProvider,
+            selectedProvider === "google" ? "google/gemini-2.0-flash-001" : 
+            selectedProvider === "groq" ? "llama-3.3-70b-versatile" : "openai/gpt-4o-mini"
+        );
         
         if (result.success && result.content) {
             setCurrentCurriculum(result.content);
@@ -325,6 +339,24 @@ export default function CurriculumPage() {
                             </div>
 
                             <div className="flex items-center gap-4">
+                                <div className="flex flex-col items-end gap-1">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">Using AI Engine</span>
+                                    <Select 
+                                        value={selectedProvider} 
+                                        onValueChange={(val: any) => setSelectedProvider(val)}
+                                        disabled={isGenerating}
+                                    >
+                                        <SelectTrigger className="w-[180px] h-10 rounded-xl bg-gray-50/50 dark:bg-gray-900/30 border-gray-100 dark:border-gray-700 text-xs font-semibold">
+                                            <SelectValue placeholder="Select Model" />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl border-gray-100 dark:border-gray-700 shadow-xl">
+                                            <SelectItem value="google" className="text-xs font-medium">Gemini 2.0 (10 Cr)</SelectItem>
+                                            <SelectItem value="groq" className="text-xs font-medium text-green-600 dark:text-green-400">Llama 3.3 Fast (5 Cr)</SelectItem>
+                                            <SelectItem value="openrouter" className="text-xs font-medium text-orange-600">GPT-4o Premium (15 Cr)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
                                 <Button 
                                     onClick={() => handleGenerate()}
                                     disabled={isGenerating || !prompt.trim()}

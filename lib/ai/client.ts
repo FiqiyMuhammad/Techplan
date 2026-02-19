@@ -22,9 +22,26 @@ const PROVIDERS = {
 export async function callAI(
   messages: Message[], 
   model: string = "google/gemini-2.0-flash-001",
-  fallbackModel: string = "openai/gpt-4o-mini"
+  fallbackModel: string = "openai/gpt-4o-mini",
+  preferredProvider?: keyof typeof PROVIDERS
 ) {
-  // --- ATTEMPT 1: OpenRouter (Primary) ---
+  // If a provider is explicitly chosen, try it first
+  if (preferredProvider && PROVIDERS[preferredProvider].key) {
+    try {
+      // For specific providers, we might need to map the model
+      let targetModel = model;
+      if (preferredProvider === "google" && !model.includes("gemini")) targetModel = "gemini-1.5-flash";
+      if (preferredProvider === "groq") targetModel = "llama-3.3-70b-versatile";
+      
+      return await executeCall(messages, targetModel, preferredProvider);
+    } catch (e) {
+      console.warn(`[AI] Preferred provider ${preferredProvider} failed, falling back to default logic:`, e);
+    }
+  }
+
+  // --- FALLBACK LOGIC ---
+  
+  // 1. OpenRouter (Primary)
   if (PROVIDERS.openrouter.key) {
     try {
       return await executeCall(messages, model, "openrouter");
@@ -32,7 +49,7 @@ export async function callAI(
       console.warn(`[AI] OpenRouter Primary (${model}) failed:`, e);
     }
 
-    // --- ATTEMPT 2: OpenRouter (Fallback Model) ---
+    // 2. OpenRouter (Fallback)
     try {
       return await executeCall(messages, fallbackModel, "openrouter");
     } catch (e) {
@@ -40,7 +57,7 @@ export async function callAI(
     }
   }
 
-  // --- ATTEMPT 3: Google Gemini (Direct) ---
+  // 3. Google Gemini (Direct)
   if (PROVIDERS.google.key) {
     try {
       return await executeCall(messages, "gemini-1.5-flash", "google");
@@ -49,7 +66,7 @@ export async function callAI(
     }
   }
 
-  // --- ATTEMPT 4: Groq (Final Fallback) ---
+  // 4. Groq (Final Fallback)
   if (PROVIDERS.groq.key) {
     try {
       return await executeCall(messages, "llama-3.3-70b-versatile", "groq");
