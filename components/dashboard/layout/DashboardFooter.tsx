@@ -70,7 +70,7 @@ export function DashboardFooter() {
             </ul>
           </div>
 
-          <div className="col-span-2 md:col-span-2 lg:col-span-2 space-y-4">
+          <div className="col-span-2 md:col-span-2 lg:col-span-2 space-y-4 hidden md:block">
             <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Support</h5>
             <div className="flex flex-col gap-3">
               <Link href="mailto:hello@techplan.com" className="text-sm font-bold text-blue-400 hover:text-blue-300 hover:underline transition-colors leading-none">
