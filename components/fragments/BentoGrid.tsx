@@ -244,21 +244,21 @@ const ScatteredDocumentation = () => {
             <figure
               key={idx}
               className={cn(
-                "relative w-48 md:w-40 cursor-pointer overflow-hidden rounded-xl border p-4",
+                "relative w-64 md:w-56 cursor-pointer overflow-hidden rounded-xl border p-5",
                 "border-gray-950/[.1] bg-gray-950/[.01]",
                 "dark:border-gray-50/[.1] dark:bg-gray-50/[.10]",
                 "transform-gpu"
               )}
             >
-              <div className="flex flex-row items-center gap-2">
-                <div className="p-2 rounded-md bg-blue-500/10">
-                   <FileText className="h-4 w-4 text-blue-500" />
+              <div className="flex flex-row items-center gap-3">
+                <div className="p-2.5 rounded-lg bg-blue-500/10">
+                   <FileText className="h-5 w-5 text-blue-500" />
                 </div>
-                <figcaption className="text-xs md:text-[11px] font-bold text-gray-900 dark:text-white truncate">
+                <figcaption className="text-sm font-bold text-gray-900 dark:text-white truncate">
                   {f.name}
                 </figcaption>
               </div>
-              <blockquote className="mt-2 text-[11px] md:text-[10px] text-gray-500 leading-tight line-clamp-2">
+              <blockquote className="mt-3 text-xs text-gray-500 leading-relaxed line-clamp-2">
                 {f.body}
               </blockquote>
             </figure>
