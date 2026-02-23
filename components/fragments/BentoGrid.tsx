@@ -152,20 +152,20 @@ const IntegrationsDemo = () => {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,150,246,0.1),transparent_80%)]" />
       
-      <div className="flex h-full w-full flex-col items-stretch justify-between gap-2 z-10 p-12">
+      <div className="flex h-full w-full flex-col items-stretch justify-between gap-2 z-10 p-6 md:p-12">
         <div className="flex flex-row items-center justify-between">
-          <Circle ref={div1Ref} className="h-14 w-14">
-            <Database className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div1Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <Database className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-          <Circle ref={div5Ref} className="h-14 w-14">
-            <Cpu className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div5Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <Cpu className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
-          <Circle ref={div2Ref} className="h-14 w-14">
-            <Cloud className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div2Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <Cloud className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-            <div className="relative h-32 w-32 flex items-center justify-center">
+            <div className="relative h-20 w-20 md:h-32 md:w-32 flex items-center justify-center">
               {/* Pulsing Outer Glow */}
               <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping duration-[4s]" />
               
@@ -173,9 +173,9 @@ const IntegrationsDemo = () => {
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-[#3A96F6] via-[#3B82F6] to-[#1D4ED8] shadow-[0_0_60px_-10px_rgba(58,150,246,0.6),inset_0_0_30px_rgba(255,255,255,0.2)] flex items-center justify-center p-2"
+                className="absolute inset-0 rounded-full bg-gradient-to-br from-[#3A96F6] via-[#3B82F6] to-[#1D4ED8] shadow-[0_0_60px_-10px_rgba(58,150,246,0.6),inset_0_0_30px_rgba(255,255,255,0.2)] flex items-center justify-center p-1 md:p-2"
               >
-                <div className="h-full w-full rounded-full border-[8px] border-white/90 border-t-white/30 border-l-white/50" />
+                <div className="h-full w-full rounded-full border-[4px] md:border-[8px] border-white/90 border-t-white/30 border-l-white/50" />
               </motion.div>
 
               {/* Static Central Icon */}
@@ -189,30 +189,30 @@ const IntegrationsDemo = () => {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="z-20 h-20 w-20 rounded-full bg-blue-600/20 backdrop-blur-md flex items-center justify-center shadow-inner"
+                className="z-20 h-12 w-12 md:h-20 md:w-20 rounded-full bg-blue-600/20 backdrop-blur-md flex items-center justify-center shadow-inner"
               >
                 <Image 
                   src="/logoku/logo2/logo-aja2.svg" 
                   alt="TechPlan Logo" 
                   width={64} 
                   height={64}
-                  className="brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                  className="w-8 h-8 md:w-16 md:h-16 brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                 />
               </motion.div>
 
               {/* Glossy Reflection (Static) */}
-              <div className="absolute top-4 left-6 w-1/2 h-1/4 bg-gradient-to-b from-white/20 to-transparent rounded-full blur-[4px] pointer-events-none z-30" />
+              <div className="absolute top-2 md:top-4 left-3 md:left-6 w-1/2 h-1/4 bg-gradient-to-b from-white/20 to-transparent rounded-full blur-[2px] md:blur-[4px] pointer-events-none z-30" />
             </div>
-          <Circle ref={div7Ref} className="h-14 w-14">
-            <FileText className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div7Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <FileText className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
         <div className="flex flex-row items-center justify-between">
-          <Circle ref={div3Ref} className="h-14 w-14">
-            <Globe className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div3Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <Globe className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-          <Circle ref={div4Ref} className="h-14 w-14">
-            <SquareDashedBottomCode className="h-7 w-7 text-[#3A96F6]" />
+          <Circle ref={div4Ref} className="h-10 w-10 md:h-14 md:w-14">
+            <SquareDashedBottomCode className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
       </div>
@@ -292,10 +292,10 @@ const ScatteredDocumentation = () => {
 const SchedulingChaos = () => {
   return (
     <div 
-      className="absolute inset-0 w-full h-full flex flex-row items-center pointer-events-none p-6 gap-8 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_15%,#000_85%,transparent_100%)]"
+      className="absolute inset-0 w-full h-full flex flex-col md:flex-row items-center pointer-events-none p-4 md:p-6 gap-2 md:gap-8 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_15%,#000_85%,transparent_100%)]"
     >
-      {/* Left Side: Animated List shifted to left */}
-      <div className="w-1/2 flex items-center justify-start scale-90 origin-left translate-y-8">
+      {/* Cards: On top for mobile, left for desktop */}
+      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-start scale-75 md:scale-90 origin-center md:origin-left translate-y-4 md:translate-y-8">
         <AnimatedList className="w-full">
           {notifications.map((item, idx) => (
             <NotificationCard {...item} key={idx} />
@@ -303,22 +303,22 @@ const SchedulingChaos = () => {
         </AnimatedList>
       </div>
 
-      <div className="w-1/2 flex flex-col justify-center gap-3 pr-4 pointer-events-auto">
-        <div className="flex flex-col gap-1">
+      <div className="w-full md:w-1/2 flex flex-col justify-center gap-1.5 md:gap-3 p-2 md:pr-4 pointer-events-auto items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col gap-1 items-center md:items-start">
            <div className="flex items-center gap-2 mb-1">
-             <span className="text-sm font-bold tracking-wider text-[#3A96F6] uppercase">Real-time Activity</span>
+             <span className="text-[10px] md:text-sm font-bold tracking-wider text-[#3A96F6] uppercase">Real-time Activity</span>
            </div>
-           <h3 className="text-2xl font-bold font-aspekta text-gray-900 dark:text-gray-100 leading-tight">
+           <h3 className="text-xl md:text-2xl font-bold font-aspekta text-gray-900 dark:text-gray-100 leading-tight">
              Intelligent Coordination
            </h3>
-           <p className="text-gray-500 font-geist text-sm leading-relaxed">
-             Everything synchronizes automatically. TechPlan tracks your mind maps, scripts, and documents across the entire institution in real-time.
+           <p className="text-gray-500 font-geist text-xs md:text-sm leading-relaxed max-w-[280px] md:max-w-full">
+             Everything synchronizes automatically. TechPlan tracks your mind maps and scripts across the entire institution.
            </p>
         </div>
-        <div className="pt-2">
+        <div className="pt-1 md:pt-2">
            <Button
               variant="link"
-              className="pointer-events-auto p-0 text-[#3A96F6] hover:text-[#368AE3] h-auto text-sm font-bold"
+              className="pointer-events-auto p-0 text-[#3A96F6] hover:text-[#368AE3] h-auto text-xs md:text-sm font-bold"
             >
               Learn more <ArrowRight className="ms-2 h-4 w-4" />
            </Button>
