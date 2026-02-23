@@ -44,7 +44,7 @@ export const SectionHeader = ({
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1] as any, // Custom premium ease from Hero
+        ease: [0.16, 1, 0.3, 1] as const, // Custom premium ease from Hero
       },
     },
   };
