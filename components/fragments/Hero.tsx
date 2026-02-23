@@ -42,22 +42,22 @@ export default function Hero() {
         animate="visible"
       >
         {/* Headline */}
-        <h1 className="hero-title text-[2rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] leading-[1.1] mb-8 tracking-[-0.03em] font-semibold font-aspekta py-2 text-balance">
+        <h1 className="hero-title text-[1.85rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] leading-[1.25] md:leading-[1.1] mb-8 tracking-[-0.03em] font-semibold font-aspekta py-2 text-balance">
           <motion.span 
             variants={itemVariants}
-            className="bg-gradient-to-r from-black from-[45%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-1"
+            className="bg-gradient-to-r from-black from-[45%] to-[#3A96F6] bg-clip-text text-transparent block md:inline-block pb-1"
           >
             Design Curriculum.
           </motion.span> <br />
           <motion.span 
             variants={itemVariants}
-            className="bg-gradient-to-r from-black from-[50%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-1"
+            className="bg-gradient-to-r from-black from-[50%] to-[#3A96F6] bg-clip-text text-transparent block md:inline-block pb-1"
           >
             Automate Scheduling.
           </motion.span> <br />
           <motion.span 
             variants={itemVariants}
-            className="bg-gradient-to-r from-black from-[55%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-1"
+            className="bg-gradient-to-r from-black from-[55%] to-[#3A96F6] bg-clip-text text-transparent block md:inline-block pb-1"
           >
             Improve Learning <br className="md:hidden" /> Flow.
           </motion.span>
