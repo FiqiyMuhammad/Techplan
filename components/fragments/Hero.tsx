@@ -53,13 +53,19 @@ export default function Hero() {
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[50%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-0.5 md:pb-1"
           >
-            Automate Scheduling.
+            Automated Scheduling.
           </motion.span> <br />
           <motion.span 
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[55%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-0.5 md:pb-1"
           >
-            Improve Learning <br className="md:hidden" /> Flow.
+            Improve Learning
+          </motion.span> <br />
+          <motion.span 
+            variants={itemVariants}
+            className="bg-gradient-to-r from-black from-[60%] to-[#3A96F6] bg-clip-text text-transparent inline-block pb-0.5 md:pb-1"
+          >
+            Flow.
           </motion.span>
         </h1>
         
