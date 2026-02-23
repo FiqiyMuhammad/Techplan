@@ -72,7 +72,7 @@ export const SectionHeader = ({
       <motion.div variants={itemVariants} className="w-full">
         <h2 
           className={cn(
-            "text-[2rem] sm:text-[2.5rem] md:text-[3rem] leading-tight font-semibold font-aspekta tracking-tight max-w-4xl bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-2",
+            "text-[1.65rem] sm:text-[2.5rem] md:text-[3rem] leading-tight font-semibold font-aspekta tracking-[-0.03em] max-w-4xl bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-2",
             isCenter ? "mx-auto" : "",
             titleClassName
           )}

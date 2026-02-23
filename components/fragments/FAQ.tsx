@@ -76,7 +76,7 @@ export default function FAQ() {
                 >
                     <motion.h2 
                         variants={itemVariants}
-                        className="text-[2rem] md:text-[2.5rem] leading-[1.1] font-semibold mb-6 font-aspekta tracking-tight bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-1"
+                        className="text-[1.65rem] md:text-[2.5rem] leading-[1.1] font-semibold mb-6 font-aspekta tracking-[-0.03em] bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-1"
                     >
                         Technical Architectures
                     </motion.h2>
