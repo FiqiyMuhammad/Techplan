@@ -148,11 +148,37 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
   });
 
   const handleSave = () => {
+    // Sanitize nodes to remove internal React Flow properties (symbols like 'internals')
+    const sanitizedNodes = nodes.map(node => ({
+        id: node.id,
+        type: node.type,
+        position: node.position,
+        data: node.data,
+        dragHandle: node.dragHandle,
+        parentNode: node.parentNode,
+        extent: node.extent
+    }));
+
+    // Sanitize edges to ensure serializable data
+    const sanitizedEdges = edges.map(edge => ({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        sourceHandle: edge.sourceHandle,
+        targetHandle: edge.targetHandle,
+        type: edge.type,
+        animated: edge.animated,
+        style: edge.style,
+        markerEnd: edge.markerEnd,
+        data: edge.data,
+        label: edge.label
+    }));
+
     saveMutation.mutate({
         id: currentWorkflowId || undefined,
         title: workflowTitle,
-        nodes: nodes,
-        edges: edges,
+        nodes: sanitizedNodes,
+        edges: sanitizedEdges,
         color: workflowColor
     });
   };
@@ -199,6 +225,13 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
       setEdges([]);
   };
 
+  useEffect(() => {
+    // Determine initial sidebar state after mount to avoid hydration mismatch
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
+  }, []);
+
   return (
     <div className="flex h-screen w-screen bg-gray-50 dark:bg-gray-900 overflow-hidden font-inter">
       <ConfirmModal 
@@ -210,16 +243,25 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
       />
       
       {/* Sidebar - Projects & Nodes */}
-      <div className={`video-editor-sidebar w-80 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col z-20 shadow-xl transition-all duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-80'} absolute md:relative h-full`}>
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+      
+      <div className={`video-editor-sidebar w-80 bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col z-40 shadow-xl transition-all duration-300 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-80'} fixed md:relative h-full`}>
         
         {/* Header */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-gray-100 dark:border-gray-800 shrink-0">
-           <Link href="/dashboard" className="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 -ml-2 rounded-lg transition-colors">
-              <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
-           </Link>
-           <span className="font-bold text-lg font-aspekta">Workflows</span>
-           <button onClick={() => setIsSidebarOpen(false)} className="md:hidden">
-             <ChevronLeftIcon className="w-5 h-5" />
+           <div className="flex items-center gap-2">
+             <Link href="/dashboard" className="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 -ml-2 rounded-lg transition-colors">
+                <ArrowLeftIcon className="w-5 h-5 text-gray-500" />
+             </Link>
+             <span className="font-bold text-lg font-aspekta">Workflows</span>
+           </div>
+           <button onClick={() => setIsSidebarOpen(false)} className="hover:bg-gray-100 dark:hover:bg-gray-800 p-2 rounded-lg transition-colors">
+             <ChevronLeftIcon className="w-5 h-5 text-gray-400" />
            </button>
         </div>
 
@@ -229,14 +271,19 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
             onClick={createNew}
             className="flex items-center gap-3 p-3 w-full rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-all group font-medium text-sm text-gray-600 dark:text-gray-300"
            >
-              <PlusIcon className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <PlusIcon className="w-4 h-4" />
+              </div>
               New Workflow
            </button>
            
            {savedWorkflows.map((w) => (
              <div key={w.id} className="group/item relative">
                 <button 
-                    onClick={() => loadWorkflow(w)}
+                    onClick={() => {
+                      loadWorkflow(w);
+                      if (window.innerWidth < 768) setIsSidebarOpen(false);
+                    }}
                     className={`flex items-center gap-3 p-3 w-full rounded-xl transition-all font-medium text-sm text-left pr-10 ${currentWorkflowId === w.id ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                     <FolderIcon className="w-4 h-4" />
@@ -291,49 +338,67 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
       </div>
 
       {/* Main Canvas Area */}
-      <div className="flex-1 relative flex flex-col h-full">
+      <div className="flex-1 relative flex flex-col h-full overflow-hidden">
         
         {/* Top Bar Overlay */}
-        <div className="absolute top-6 left-6 right-6 z-10 flex justify-between items-start pointer-events-none">
-           <div className="pointer-events-auto">
-                <input 
-                    value={workflowTitle}
-                    onChange={(e) => setWorkflowTitle(e.target.value)}
-                    className="bg-white dark:bg-gray-900 px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl font-bold text-sm focus:ring-2 focus:ring-blue-500 outline-none min-w-[200px]" 
-                />
+        <div className="absolute top-4 md:top-6 left-4 md:left-6 right-4 md:right-6 z-10 flex flex-col md:flex-row justify-between items-start gap-4 pointer-events-none">
+           <div className="flex items-center gap-3 pointer-events-auto">
+                <button 
+                  onClick={() => setIsSidebarOpen(true)}
+                  className={`p-2.5 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl transition-all ${isSidebarOpen ? 'hidden' : 'flex'}`}
+                >
+                  <Square2StackIcon className="w-5 h-5 text-gray-600" />
+                </button>
+                <div className="relative">
+                  <input 
+                      value={workflowTitle}
+                      onChange={(e) => setWorkflowTitle(e.target.value)}
+                      className="bg-white dark:bg-gray-900 px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl font-bold text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full md:min-w-[200px]" 
+                  />
+                  <PencilIcon className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
            </div>
            
-           <div className="bg-white dark:bg-gray-900 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl flex gap-1 pointer-events-auto">
+           <div className="bg-white dark:bg-gray-900 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800 shadow-xl flex gap-1 pointer-events-auto w-full md:w-auto">
               <button 
                 onClick={handleSave}
-                className="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-xs font-bold hover:shadow-lg transition-all active:scale-95 flex items-center gap-2"
+                className="flex-1 md:flex-none px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg text-xs font-bold hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                  Save Changes
               </button>
-              <button className="px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
-                 <PencilIcon className="w-4 h-4" />
-                 Edit Manual
+              <button className="flex-1 md:flex-none px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2">
+                 <DocumentTextIcon className="w-4 h-4" />
+                 <span className="hidden sm:inline">Export</span>
               </button>
            </div>
         </div>
 
         {/* Floating Bottom Toolbar */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-auto">
-            <div className="bg-white dark:bg-gray-900/90 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl flex items-center gap-2">
+        <div className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-10 pointer-events-auto w-[calc(100%-2rem)] md:w-auto">
+            <div className="bg-white dark:bg-gray-900/90 backdrop-blur-md p-1.5 md:p-2 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-2xl flex items-center justify-center gap-1 md:gap-2">
                <button 
-                className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all text-gray-600 dark:text-gray-300 flex flex-col items-center gap-1 min-w-[60px]"
+                className="p-2.5 md:p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all text-gray-600 dark:text-gray-300 flex flex-col items-center gap-1 min-w-[55px] md:min-w-[60px]"
                 onClick={() => {
                     const id = Math.random().toString();
-                    setNodes((nds) => nds.concat({ id, type: 'rectangle', position: { x: 300, y: 300 }, data: { label: 'New Node' } }));
+                    const position = reactFlowInstance?.project({ x: window.innerWidth / 2, y: window.innerHeight / 2 }) || { x: 300, y: 300 };
+                    setNodes((nds) => nds.concat({ id, type: 'rectangle', position, data: { label: 'New Node' } }));
                 }}
                >
-                   <Square2StackIcon className="w-5 h-5" />
-                   <span className="text-[10px] font-bold">Shape</span>
+                   <Square2StackIcon className="w-5 h-5 md:w-5 md:h-5 text-blue-500" />
+                   <span className="text-[9px] md:text-[10px] font-bold">Shape</span>
                </button>
-               <div className="w-px h-8 bg-gray-200 dark:bg-gray-700" />
-               <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all text-gray-600 dark:text-gray-300 flex flex-col items-center gap-1 min-w-[60px]">
-                   <DocumentTextIcon className="w-5 h-5" />
-                   <span className="text-[10px] font-bold">Text</span>
+               <div className="w-px h-8 bg-gray-200 dark:bg-gray-700 mx-1" />
+               <button className="p-2.5 md:p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all text-gray-600 dark:text-gray-300 flex flex-col items-center gap-1 min-w-[55px] md:min-w-[60px]">
+                   <DocumentTextIcon className="w-5 h-5 md:w-5 md:h-5 text-emerald-500" />
+                   <span className="text-[9px] md:text-[10px] font-bold">Text</span>
+               </button>
+               <div className="w-px h-8 bg-gray-200 dark:bg-gray-700 mx-1 md:hidden" />
+               <button 
+                className="md:hidden p-2.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all text-gray-600 dark:text-gray-300 flex flex-col items-center gap-1 min-w-[55px]"
+                onClick={() => setIsSidebarOpen(true)}
+               >
+                   <FolderIcon className="w-5 h-5 text-indigo-500" />
+                   <span className="text-[9px] font-bold">Files</span>
                </button>
             </div>
         </div>
@@ -354,7 +419,7 @@ export default function WorkflowEditor({ initialId }: { initialId?: string }) {
             fitView
             className="bg-gray-50 dark:bg-gray-950"
           >
-            <Controls className="!bg-white dark:!bg-gray-800 !border-gray-200 dark:!border-gray-700 !shadow-lg" />
+            <Controls className="!bg-white dark:!bg-gray-800 !border-gray-200 dark:!border-gray-700 !shadow-lg !m-4 md:!m-10" />
             <Background gap={20} size={1} variant={BackgroundVariant.Dots} className="opacity-50" />
           </ReactFlow>
         </div>

@@ -343,7 +343,7 @@ export default function AccountSettingsPage() {
                                 <div className="relative w-32 h-32 flex items-center justify-center">
                                     <svg className="w-full h-full -rotate-90">
                                         <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="10" fill="transparent" className="text-gray-200 dark:text-gray-800" />
-                                        <circle cx="64" cy="64" r="56" stroke="currentColor" strokeWidth="10" fill="transparent" strokeDasharray="352" strokeDashoffset={352 - (352 * 12.5) / 100} strokeLinecap="round" className="text-gray-900 dark:text-white" />
+                                        <circle cx="64" cy="64" r="56" stroke="#365B80" strokeWidth="10" fill="transparent" strokeDasharray="352" strokeDashoffset={352 - (352 * 12.5) / 100} strokeLinecap="round" />
                                     </svg>
                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                                         <span className="text-3xl font-semibold text-gray-900 dark:text-white leading-none">15</span>
@@ -400,8 +400,7 @@ export default function AccountSettingsPage() {
                                         Upgrade to Pro to unlock unlimited tasks and premium features.
                                     </p>
                                 </div>
-                                <Button className="h-10 px-6 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-black font-semibold gap-2 shadow-md transition-all group text-sm">
-                                    <PlusIcon className="w-4 h-4 group-hover:rotate-90 transition-transform" />
+                                <Button className="h-10 px-6 rounded-xl bg-[#365B80] hover:bg-[#2d4d6d] text-white font-semibold shadow-md transition-all group text-sm border-none">
                                     Upgrade to Pro
                                 </Button>
                             </div>

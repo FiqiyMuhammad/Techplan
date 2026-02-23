@@ -8,16 +8,21 @@ import { headers } from "next/headers";
 import { eq, and } from "drizzle-orm";
 
 export async function getWorkflows() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
 
-  if (!session?.user) return [];
+    if (!session?.user) return [];
 
-  return await db.query.workflows.findMany({
-    where: (workflows, { eq }) => eq(workflows.userId, session.user.id),
-    orderBy: (workflows, { desc }) => [desc(workflows.updatedAt)]
-  });
+    return await db.query.workflows.findMany({
+      where: (workflows, { eq }) => eq(workflows.userId, session.user.id),
+      orderBy: (workflows, { desc }) => [desc(workflows.updatedAt)]
+    });
+  } catch (error) {
+    console.error("Failed to get session or workflows:", error);
+    return [];
+  }
 }
 
 export async function saveWorkflow(data: {
@@ -28,35 +33,40 @@ export async function saveWorkflow(data: {
   status?: string;
   color?: string;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
 
-  if (!session?.user) throw new Error("Unauthorized");
+    if (!session?.user) throw new Error("Unauthorized");
 
-  if (data.id) {
-    const [updated] = await db.update(workflows)
-      .set({ 
-        title: data.title, 
-        nodes: data.nodes, 
-        edges: data.edges, 
-        status: data.status,
-        color: data.color,
-        updatedAt: new Date() 
-      })
-      .where(and(eq(workflows.id, data.id), eq(workflows.userId, session.user.id)))
-      .returning();
-    return updated;
-  } else {
-    const [inserted] = await db.insert(workflows).values({
-      userId: session.user.id,
-      title: data.title,
-      nodes: data.nodes,
-      edges: data.edges,
-      status: data.status || 'Draft',
-      color: data.color || 'blue'
-    }).returning();
-    return inserted;
+    if (data.id) {
+      const [updated] = await db.update(workflows)
+        .set({ 
+          title: data.title, 
+          nodes: data.nodes, 
+          edges: data.edges, 
+          status: data.status,
+          color: data.color,
+          updatedAt: new Date() 
+        })
+        .where(and(eq(workflows.id, data.id), eq(workflows.userId, session.user.id)))
+        .returning();
+      return updated;
+    } else {
+      const [inserted] = await db.insert(workflows).values({
+        userId: session.user.id,
+        title: data.title,
+        nodes: data.nodes,
+        edges: data.edges,
+        status: data.status || 'Draft',
+        color: data.color || 'blue'
+      }).returning();
+      return inserted;
+    }
+  } catch (error) {
+    console.error("Failed to save workflow:", error);
+    throw error;
   }
 }
 

@@ -23,7 +23,7 @@ export default function DashboardLayout({
 
         <Sidebar />
         <div 
-          className={`flex flex-col transition-all duration-300 relative z-10 min-h-screen w-full ${isCollapsed ? 'pl-20' : 'pl-64'}`}
+          className={`flex flex-col transition-all duration-300 relative min-h-screen w-full ${isCollapsed ? 'md:pl-20' : 'md:pl-64'}`}
         >
           <Topbar />
           <main className="flex-1 w-full pt-16 bg-[radial-gradient(at_0%_0%,rgba(255,255,255,1)_0%,rgba(255,255,255,1)_20%,rgba(243,244,246,1)_100%)] dark:bg-[radial-gradient(at_0%_0%,rgba(17,24,39,1)_0%,rgba(17,24,39,1)_20%,rgba(3,7,18,1)_100%)] transition-colors duration-500 relative">

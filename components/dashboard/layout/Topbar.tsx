@@ -57,7 +57,7 @@ const topbarItemVariants: Variants = {
 
 export default function Topbar() {
   const { theme, toggleTheme } = useTheme();
-  const { isCollapsed } = useSidebarStore();
+  const { isCollapsed, toggleMobileSidebar } = useSidebarStore();
   const [time, setTime] = useState<Date | null>(null);
   const { data: session } = authClient.useSession();
 
@@ -73,20 +73,33 @@ export default function Topbar() {
   const initials = firstName[0] + (lastName ? lastName[0] : "");
 
   return (
-    <header className={`fixed top-0 right-0 z-40 transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 px-6 h-14 flex items-center justify-end ${isCollapsed ? 'left-20' : 'left-64'}`}>
+    <header className={`fixed top-0 right-0 z-40 transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 sm:px-6 h-14 flex items-center justify-between shadow-md shadow-gray-900/5 dark:shadow-none ${isCollapsed ? 'md:left-20' : 'md:left-64'} left-0`}>
       
+      <div className="flex items-center gap-4">
+        <button 
+          onClick={toggleMobileSidebar}
+          className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 transition-colors"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
       <motion.div 
         variants={topbarContainerVariants}
         initial="hidden"
         animate="visible"
-        className="flex items-center gap-4"
+        className="flex items-center gap-2 sm:gap-4"
       >
         {/* Theme Toggle Pill Slider */}
-        <motion.div variants={topbarItemVariants} className="relative flex items-center bg-gray-100/80 dark:bg-gray-800/80 rounded-full p-1 border border-gray-200 dark:border-gray-700 gap-3">
+        <motion.div variants={topbarItemVariants} className="relative flex items-center bg-gray-100/80 dark:bg-gray-800/80 rounded-full p-1 border border-gray-200 dark:border-gray-700 gap-2 sm:gap-3">
           <motion.div
             className="absolute rounded-full shadow-sm bg-white dark:bg-gray-600"
             animate={{ 
-              x: theme === 'dark' ? 40 : 0 
+              x: theme === 'dark' ? (window?.innerWidth < 640 ? 32 : 40) : 0 
             }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
             style={{ width: '28px', height: '28px' }}
@@ -106,10 +119,10 @@ export default function Topbar() {
         </motion.div>
 
         {/* Separator */}
-        <motion.div variants={topbarItemVariants} className="h-6 w-[1px] bg-gray-200 dark:bg-gray-800" />
+        <motion.div variants={topbarItemVariants} className="hidden sm:block h-6 w-[1px] bg-gray-200 dark:bg-gray-800" />
 
         {/* 24-Hour Calculator Clock (Fixed Width to prevent Jitter) */}
-        <motion.div variants={topbarItemVariants} className="w-[125px] flex items-center justify-center">
+        <motion.div variants={topbarItemVariants} className="hidden sm:flex w-[125px] items-center justify-center">
           <span 
             className="text-xl font-bold text-gray-400 dark:text-gray-500 leading-none tracking-widest tabular-nums"
             style={{ fontFamily: 'var(--font-digital)' }}

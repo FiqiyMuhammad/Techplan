@@ -108,6 +108,7 @@ export const schedules = pgTable("schedules", {
   color: text("color").default("blue"),
   participants: text("participants"), // JSON array or comma-separated
   createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
 }, (table) => [
   index("schedule_user_idx").on(table.userId),
   index("schedule_date_idx").on(table.date),
@@ -153,6 +154,7 @@ export const documents = pgTable("documents", {
   format: text("format").default("pdf"), // Planned export format
   fileUrl: text("fileUrl"), // For future file storage URL
   createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
 }, (table) => [
   index("doc_user_idx").on(table.userId),
 ]);
@@ -167,6 +169,19 @@ export const scripts = pgTable("scripts", {
   language: text("language").default("javascript"),
   version: integer("version").default(1),
   createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
 }, (table) => [
   index("script_user_idx").on(table.userId),
+]);
+
+// 8. To-Do List
+export const todos = pgTable("todos", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: text("userId").notNull().references(() => user.id),
+  task: text("task").notNull(),
+  isCompleted: boolean("isCompleted").default(false),
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow(),
+}, (table) => [
+  index("todo_user_idx").on(table.userId),
 ]);

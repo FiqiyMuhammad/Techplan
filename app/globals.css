@@ -17,20 +17,41 @@
   --gradient-text-premium: linear-gradient(to right, #000000 0%, #6b7280 100%);
   --gradient-dark-text: linear-gradient(to right, #ffffff 0%, #9ca3af 100%);
 
-  --animate-rippling: rippling 0.6s linear;
+
+  @keyframes rippling {
+    0% {
+      transform: scale(0);
+      opacity: 0.5;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+
 }
 
-@keyframes rippling {
-  0% {
-    transform: scale(0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
+.reverse {
+  animation-direction: reverse;
 }
-
 
 html, body {
   max-width: 100% !important;
@@ -182,6 +203,7 @@ html {
   --sidebar-accent-foreground: #111827;
   --sidebar-border: #e5e7eb;
   --sidebar-ring: #9ca3af;
+  --shimmer-color: #c0c0c0;
 }
 
 .dark {
@@ -216,6 +238,7 @@ html {
   --sidebar-accent-foreground: #f9fafb;
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #6b7280;
+  --shimmer-color: #ffffff;
 }
 
 @layer base {
@@ -265,27 +288,52 @@ html {
   border-color: #e5e7eb !important;
 }
 
-/* Custom Scrollbar Override */
+/* Curriculum Specific Spacing Overrides */
+.markdown-content p {
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.markdown-content ul, .markdown-content ol {
+  margin-top: 0.25em !important;
+  margin-bottom: 1em !important;
+  padding-left: 1.5em !important;
+}
+
+.markdown-content li {
+  margin-top: 0.1em !important;
+  margin-bottom: 0.1em !important;
+}
+
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+  margin-top: 1.5em !important;
+  margin-bottom: 0.5em !important;
+}
+
+.markdown-content strong {
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
 .custom-scrollbar {
   scrollbar-width: thin !important;
-  scrollbar-color: #4b5563 #1f2937 !important; /* thumb track */
+  scrollbar-color: #4b5563 transparent !important;
+  -ms-overflow-style: auto !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  display: block !important; /* Force show */
-  width: 8px !important;
-  height: 8px !important;
+  display: block !important;
+  width: 5px !important;
+  height: 5px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1f2937 !important; /* gray-800 */
-  border-radius: 4px;
+  background: transparent !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #4b5563 !important; /* gray-600 */
-  border-radius: 4px;
-  border: 1px solid #1f2937;
+  background-color: #9ca3af !important;
+  border-radius: 20px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

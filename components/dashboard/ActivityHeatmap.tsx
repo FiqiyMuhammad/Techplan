@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
     format, 
@@ -10,28 +10,26 @@ import {
 } from "date-fns";
 import { getActivityData } from "@/lib/actions/stats-actions";
 import { SparklesIcon } from "@heroicons/react/24/outline";
+import { useQuery } from "@tanstack/react-query";
 
 interface ActivityHeatmapProps {
     userName: string;
 }
 
 export default function ActivityHeatmap({ userName }: ActivityHeatmapProps) {
-    const [data, setData] = useState<Record<string, number>>({});
-    const [isLoading, setIsLoading] = useState(true);
+    const { data: activityData = {}, isLoading } = useQuery({
+        queryKey: ["activity-heatmap"],
+        queryFn: async () => {
+            const res = await getActivityData();
+            return res.success ? (res.data as Record<string, number>) : {};
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutes cache
+    });
+
     const [hoveredDay, setHoveredDay] = useState<{ date: Date, count: number } | null>(null);
+    const data = activityData;
 
     const displayName = userName || "User";
-
-    useEffect(() => {
-        async function fetchActivity() {
-            const res = await getActivityData();
-            if (res.success && res.data) {
-                setData(res.data);
-            }
-            setIsLoading(false);
-        }
-        fetchActivity();
-    }, []);
 
     const days = useMemo(() => {
         const today = startOfToday();
@@ -76,7 +74,6 @@ export default function ActivityHeatmap({ userName }: ActivityHeatmapProps) {
     return (
         <div 
             className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-[var(--shadow-premium)] p-6 overflow-hidden relative"
-            style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
         >
             <div className="flex justify-between items-start mb-6">
                 <div>
@@ -140,11 +137,7 @@ export default function ActivityHeatmap({ userName }: ActivityHeatmapProps) {
                 </AnimatePresence>
             </div>
 
-            {/* Labels */}
-            <div className="mt-4 flex justify-between text-[10px] text-gray-400 font-bold uppercase tracking-widest pr-2">
-                <span>{format(subDays(startOfToday(), 182), "MMM yyyy")}</span>
-                <span>Today</span>
-            </div>
+
 
             {/* Background Decorative Pattern */}
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />

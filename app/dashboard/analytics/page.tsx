@@ -12,7 +12,7 @@ import {
   ArrowUturnLeftIcon,
   ArrowUturnRightIcon
 } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import ConfirmModal from "@/components/elements/ConfirmModal";
+import Modal from "@/components/elements/Modal";
 
 // --- Types ---
 interface Workflow {
@@ -51,6 +52,9 @@ const COLORS = [
 ];
 
 export default function AnalyticsPage() {
+  const searchParams = useSearchParams();
+  const defaultTab = searchParams.get("tab") || "workflows";
+
   const tabs = [
     { id: "workflows", label: "Workflows", icon: PresentationChartLineIcon },
     { id: "notes", label: "Notes", icon: Square3Stack3DIcon },
@@ -58,24 +62,24 @@ export default function AnalyticsPage() {
   ];
 
   return (
-    <div className="p-6 pb-32 space-y-6 min-h-screen">
-      <Tabs defaultValue="workflows" className="w-full">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div>
-                <h1 className="text-4xl font-bold font-aspekta tracking-tighter pb-1">
+    <div className="px-4 md:px-6 py-6 pb-32 space-y-6 min-h-screen">
+      <Tabs defaultValue={defaultTab} className="w-full">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+          <div className="text-center md:text-left">
+                <h1 className="text-3xl md:text-4xl font-bold font-aspekta tracking-tighter pb-1">
                   <span className="text-black dark:text-white">Brainstorming Hub</span>
                 </h1>
-                <p className="text-gray-500 dark:text-gray-400 mt-0.5 font-geist text-xs">
+                <p className="text-gray-500 dark:text-gray-400 mt-0.5 font-geist text-xs md:text-sm">
                 Visualize ideas, take quick notes, and design your workflows.
                 </p>
           </div>
           
-          <TabsList className="bg-gray-100 dark:bg-gray-800 p-1.5 rounded-full inline-flex h-12 items-center border border-gray-200 dark:border-gray-700/50 shadow-inner">
+          <TabsList className="bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm p-1 md:p-1.5 rounded-full flex h-11 md:h-12 w-full md:w-auto items-center border border-gray-200/50 dark:border-gray-700/50 shadow-inner">
             {tabs.map((tab) => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id} 
-                className="rounded-full px-5 h-full flex items-center justify-center gap-2 text-sm font-semibold transition-all z-10 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="flex-1 md:flex-none rounded-full px-4 md:px-6 h-full flex items-center justify-center gap-2 text-[13px] md:text-sm font-bold transition-all z-10 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
@@ -159,7 +163,7 @@ function WorkflowView() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
         {isLoading ? (
             Array(3).fill(0).map((_, i) => <WorkflowSkeleton key={i} />)
         ) : workflows.map((wf) => (
@@ -207,75 +211,80 @@ function WorkflowView() {
       </div>
 
       {/* Add Workflow Modal */}
-      <AnimatePresence>
-        {isAddOpen && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-                <motion.div 
-                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                    className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-                    onClick={() => setIsAddOpen(false)}
-                />
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-md relative z-10 border border-gray-100 dark:border-gray-800"
+      <Modal
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        title="New Workflow"
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Judul Workflow</label>
+            <Input 
+              placeholder="e.g. Matematika SMA Kelas 10" 
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              className="bg-gray-50 dark:bg-gray-900 border-none h-11 px-4 rounded-xl font-medium focus-visible:ring-1 focus-visible:ring-blue-500/20"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Tema Warna</label>
+            <div className="flex gap-3 p-1">
+              {COLORS.map(c => (
+                <button
+                  key={c.id}
+                  onClick={() => setNewColor(c.id as Workflow["color"])}
+                  className={`relative w-8 h-8 rounded-full transition-all flex items-center justify-center group ${
+                    newColor === c.id 
+                    ? 'ring-2 ring-offset-2 ring-gray-900 dark:ring-white scale-110' 
+                    : 'hover:scale-110'
+                  }`}
                 >
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-bold">New Workflow</h3>
-                        <button onClick={() => setIsAddOpen(false)} className="text-gray-400 hover:text-gray-900">
-                            <XMarkIcon className="w-5 h-5" />
-                        </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Title</label>
-                            <Input 
-                                placeholder="Workflow Title..." 
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                                className="font-semibold"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Color Theme</label>
-                            <div className="flex gap-2">
-                                {COLORS.map(c => (
-                                    <button
-                                        key={c.id}
-                                        onClick={() => setNewColor(c.id as Workflow["color"])}
-                                        className={`w-8 h-8 rounded-full ${c.bg.split(' ')[0]} border-2 transition-all flex items-center justify-center ${newColor === c.id ? 'border-gray-900 dark:border-white scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
-                                    >
-                                        <div className={`w-2 h-2 rounded-full bg-${c.id}-500`} />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div>
-                             <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Initial Status</label>
-                             <div className="flex gap-2">
-                                 {["Draft", "Planning", "In Progress"].map(s => (
-                                     <button
-                                        key={s}
-                                        onClick={() => setNewStatus(s as Workflow["status"])}
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${newStatus === s ? 'bg-gray-900 text-white border-gray-900' : 'bg-gray-50 text-gray-500 border-transparent hover:bg-gray-100'}`}
-                                     >
-                                         {s}
-                                     </button>
-                                 ))}
-                             </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-8 flex justify-end gap-2">
-                        <Button variant="ghost" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                        <Button onClick={handleAdd} disabled={!newTitle.trim()}>Create Workflow</Button>
-                    </div>
-                </motion.div>
+                  <div className={`w-full h-full rounded-full ${c.bg.split(' ')[0]}`} />
+                  <div className={`absolute w-2 h-2 rounded-full bg-${c.id === 'blue' ? 'blue' : c.id === 'indigo' ? 'indigo' : c.id === 'emerald' ? 'emerald' : c.id === 'amber' ? 'amber' : 'rose'}-500`} />
+                </button>
+              ))}
             </div>
-        )}
-      </AnimatePresence>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Status Awal</label>
+            <div className="flex bg-gray-50 dark:bg-gray-900 p-1 rounded-xl gap-1">
+              {["Draft", "Planning", "In Progress"].map(s => (
+                <button
+                  key={s}
+                  onClick={() => setNewStatus(s as Workflow["status"])}
+                  className={`flex-1 py-2 text-[11px] font-bold rounded-lg transition-all ${
+                    newStatus === s 
+                    ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' 
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                  }`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="pt-4 flex gap-3">
+            <Button 
+              variant="secondary" 
+              onClick={() => setIsAddOpen(false)}
+              className="flex-1 h-11 rounded-xl font-bold text-gray-500"
+            >
+              Batal
+            </Button>
+            <Button 
+              onClick={handleAdd} 
+              disabled={!newTitle.trim()}
+              className="flex-1 h-11 rounded-xl font-bold bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg shadow-gray-200 dark:shadow-none"
+            >
+              Lanjutkan
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </motion.div>
   );
 }
@@ -355,7 +364,7 @@ function NotesView() {
                 </Button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                 {isLoading ? (
                     Array(3).fill(0).map((_, i) => <NoteSkeleton key={i} />)
                 ) : notes.map((note) => {
@@ -393,70 +402,71 @@ function NotesView() {
             </div>
 
             {/* Add Note Modal */}
-            <AnimatePresence>
-                {isAddOpen && (
-                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-                        <motion.div 
-                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-                            onClick={() => setIsAddOpen(false)}
-                        />
-                        <motion.div 
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-md relative z-10 border border-gray-100 dark:border-gray-800"
-                        >
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-lg font-bold">New Stickynote</h3>
-                                <button onClick={() => setIsAddOpen(false)} className="text-gray-400 hover:text-gray-900">
-                                    <XMarkIcon className="w-5 h-5" />
-                                </button>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Title</label>
-                                    <Input 
-                                        placeholder="Note Title..." 
-                                        value={newTitle}
-                                        onChange={(e) => setNewTitle(e.target.value)}
-                                        className="font-bold"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Color</label>
-                                    <div className="flex gap-2">
-                                        {COLORS.map(c => (
-                                            <button
-                                                key={c.id}
-                                                onClick={() => setNewColor(c.id as Note["color"])}
-                                                className={`w-8 h-8 rounded-full ${c.bg.split(' ')[0]} border-2 transition-all flex items-center justify-center ${newColor === c.id ? 'border-gray-900 dark:border-white scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
-                                            >
-                                                <div className={`w-2 h-2 rounded-full bg-${c.id}-500`} />
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                     <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Content</label>
-                                     <Textarea 
-                                        placeholder="Write something..." 
-                                        value={newContent}
-                                        onChange={(e) => setNewContent(e.target.value)}
-                                        className="h-32 resize-none"
-                                     />
-                                </div>
-                            </div>
+            <Modal
+              isOpen={isAddOpen}
+              onClose={() => setIsAddOpen(false)}
+              title="New Stickynote"
+              maxWidth="max-w-md"
+            >
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Judul Catatan</label>
+                  <Input 
+                    placeholder="e.g. Ide Research" 
+                    value={newTitle}
+                    onChange={(e) => setNewTitle(e.target.value)}
+                    className="bg-gray-50 dark:bg-gray-900 border-none h-11 px-4 rounded-xl font-bold focus-visible:ring-1 focus-visible:ring-blue-500/20"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Warna Nota</label>
+                  <div className="flex gap-3 p-1">
+                    {COLORS.map(c => (
+                      <button
+                        key={c.id}
+                        onClick={() => setNewColor(c.id as Note["color"])}
+                        className={`relative w-8 h-8 rounded-full transition-all flex items-center justify-center group ${
+                          newColor === c.id 
+                          ? 'ring-2 ring-offset-2 ring-gray-900 dark:ring-white scale-110' 
+                          : 'hover:scale-110'
+                        }`}
+                      >
+                        <div className={`w-full h-full rounded-full ${c.bg.split(' ')[0]}`} />
+                        <div className={`absolute w-2 h-2 rounded-full bg-${c.id === 'blue' ? 'blue' : c.id === 'indigo' ? 'indigo' : c.id === 'emerald' ? 'emerald' : c.id === 'amber' ? 'amber' : 'rose'}-500`} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-                            <div className="mt-8 flex justify-end gap-2">
-                                <Button variant="ghost" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                                <Button onClick={handleAdd} disabled={!newTitle.trim()}>Save Note</Button>
-                            </div>
-                        </motion.div>
-                    </div>
-                )}
-            </AnimatePresence>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-1">Isi Konten</label>
+                  <Textarea 
+                    placeholder="Tuliskan ide brilianmu di sini..." 
+                    value={newContent}
+                    onChange={(e) => setNewContent(e.target.value)}
+                    className="bg-gray-50 dark:bg-gray-900 border-none min-h-[140px] p-4 rounded-xl font-medium focus-visible:ring-1 focus-visible:ring-blue-500/20 resize-none font-geist"
+                  />
+                </div>
+                
+                <div className="pt-4 flex gap-3">
+                  <Button 
+                    variant="secondary" 
+                    onClick={() => setIsAddOpen(false)}
+                    className="flex-1 h-11 rounded-xl font-bold text-gray-500"
+                  >
+                    Batal
+                  </Button>
+                  <Button 
+                    onClick={handleAdd} 
+                    disabled={!newTitle.trim()}
+                    className="flex-1 h-11 rounded-xl font-bold bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-lg shadow-gray-200 dark:shadow-none"
+                  >
+                    Simpan Nota
+                  </Button>
+                </div>
+              </div>
+            </Modal>
         </motion.div>
     )
 }
@@ -511,22 +521,29 @@ function CanvasView() {
         }
     }, [color]);
 
-    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
         
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        let x, y;
+        
+        if ('touches' in e) {
+            x = e.touches[0].clientX - rect.left;
+            y = e.touches[0].clientY - rect.top;
+        } else {
+            x = (e as React.MouseEvent).clientX - rect.left;
+            y = (e as React.MouseEvent).clientY - rect.top;
+        }
 
         ctx.beginPath();
         ctx.moveTo(x, y);
         setIsDrawing(true);
     };
 
-    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -534,8 +551,15 @@ function CanvasView() {
         if (!ctx) return;
         
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        let x, y;
+
+        if ('touches' in e) {
+            x = e.touches[0].clientX - rect.left;
+            y = e.touches[0].clientY - rect.top;
+        } else {
+            x = (e as React.MouseEvent).clientX - rect.left;
+            y = (e as React.MouseEvent).clientY - rect.top;
+        }
 
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -601,7 +625,7 @@ function CanvasView() {
     };
 
     return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`h-[600px] ${isDrawingMode ? 'bg-white' : 'bg-white dark:bg-gray-800'} rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden flex items-center justify-center transition-colors`}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`h-[500px] md:h-[700px] ${isDrawingMode ? 'bg-white' : 'bg-white dark:bg-gray-800'} rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm relative overflow-hidden flex items-center justify-center transition-colors`}>
             
             {!isDrawingMode ? (
                 <>
@@ -630,67 +654,70 @@ function CanvasView() {
                         onMouseMove={draw}
                         onMouseUp={stopDrawing}
                         onMouseLeave={stopDrawing}
+                        onTouchStart={startDrawing}
+                        onTouchMove={draw}
+                        onTouchEnd={stopDrawing}
                     />
                     
                     {/* Floating Toolbar */}
                     <motion.div 
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white p-2 rounded-full shadow-2xl border border-gray-100 flex items-center gap-2 z-20"
+                        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-900 p-1.5 md:p-2 rounded-full shadow-2xl border border-gray-100 dark:border-gray-800 flex items-center gap-1.5 md:gap-2 z-20 max-w-[95vw] overflow-x-auto no-scrollbar"
                     >
                          {/* Colors */}
-                         <div className="flex bg-gray-100 p-1.5 rounded-full gap-1.5">
+                         <div className="flex bg-gray-100 dark:bg-gray-800 p-1 md:p-1.5 rounded-full gap-1 md:gap-1.5 shrink-0">
                             {["#000000", "#ef4444", "#3b82f6", "#22c55e", "#f59e0b"].map((c) => (
                                 <button 
                                     key={c}
                                     onClick={() => setColor(c)}
-                                    className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${color === c ? 'border-gray-900 scale-125' : 'border-transparent'}`}
+                                    className={`w-5 h-5 md:w-6 md:h-6 rounded-full border-2 transition-transform hover:scale-110 ${color === c ? 'border-gray-900 dark:border-white scale-125' : 'border-transparent'}`}
                                     style={{ backgroundColor: c }}
                                 />
                             ))}
                          </div>
                          
-                         <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                         <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5 md:mx-1 shrink-0"></div>
 
                          {/* Eraser */}
                          <button 
                              onClick={() => setColor("#ffffff")} 
-                             className={`p-2 rounded-full hover:bg-gray-100 transition-colors ${color === "#ffffff" ? "bg-gray-200 shadow-inner" : ""}`}
+                             className={`p-1.5 md:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${color === "#ffffff" ? "bg-gray-200 dark:bg-gray-700 shadow-inner" : ""}`}
                              title="Eraser"
                          >
-                             <div className="w-4 h-4 border-2 border-gray-400 rounded-sm bg-white"></div>
+                             <div className="w-3.5 h-3.5 md:w-4 md:h-4 border-2 border-gray-400 rounded-sm bg-white shrink-0"></div>
                          </button>
 
-                         <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                         <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5 md:mx-1 shrink-0"></div>
 
                          {/* Undo / Redo */}
                          <button 
                              onClick={undo} 
                              disabled={step <= 0}
-                             className={`p-2 rounded-full transition-colors ${step > 0 ? 'hover:bg-gray-100 text-gray-700' : 'text-gray-300 cursor-not-allowed'}`}
+                             className={`p-1.5 md:p-2 rounded-full transition-colors ${step > 0 ? 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'}`}
                              title="Undo"
                          >
-                             <ArrowUturnLeftIcon className="w-5 h-5" />
+                             <ArrowUturnLeftIcon className="w-4 h-4 md:w-5 md:h-5" />
                          </button>
                          <button 
                              onClick={redo} 
                              disabled={step >= history.length - 1}
-                             className={`p-2 rounded-full transition-colors ${step < history.length - 1 ? 'hover:bg-gray-100 text-gray-700' : 'text-gray-300 cursor-not-allowed'}`}
+                             className={`p-1.5 md:p-2 rounded-full transition-colors ${step < history.length - 1 ? 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600 cursor-not-allowed'}`}
                              title="Redo"
                          >
-                             <ArrowUturnRightIcon className="w-5 h-5" />
+                             <ArrowUturnRightIcon className="w-4 h-4 md:w-5 md:h-5" />
                          </button>
 
-                         <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                         <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5 md:mx-1 shrink-0"></div>
 
-                         <button onClick={clearCanvas} className="p-2 rounded-full hover:bg-red-50 text-gray-500 hover:text-red-500 transition-colors" title="Clear All">
-                             <TrashIcon className="w-5 h-5" />
+                         <button onClick={clearCanvas} className="p-1.5 md:p-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-500 hover:text-red-500 transition-colors" title="Clear All">
+                             <TrashIcon className="w-4 h-4 md:w-5 md:h-5" />
                          </button>
                          
-                         <div className="w-px h-6 bg-gray-200 mx-1"></div>
+                         <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 mx-0.5 md:mx-1 shrink-0"></div>
                          
-                         <button onClick={() => setIsDrawingMode(false)} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-900 transition-colors" title="Exit">
-                             <XMarkIcon className="w-5 h-5" />
+                         <button onClick={() => setIsDrawingMode(false)} className="p-1.5 md:p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors" title="Exit">
+                             <XMarkIcon className="w-4 h-4 md:w-5 md:h-5" />
                          </button>
                     </motion.div>
                 </>

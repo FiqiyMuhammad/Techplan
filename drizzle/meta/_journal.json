@@ -15,6 +15,13 @@
       "when": 1771396153217,
       "tag": "0001_first_nightcrawler",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771549647839,
+      "tag": "0002_bent_golden_guardian",
+      "breakpoints": true
     }
   ]
 }

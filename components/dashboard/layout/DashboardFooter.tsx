@@ -8,7 +8,7 @@ export function DashboardFooter() {
     { name: 'Overview', href: '/dashboard' },
     { name: 'Schedule', href: '/dashboard/schedule' },
     { name: 'Curriculum', href: '/dashboard/curriculum' },
-    { name: 'Resources', href: '/dashboard/resources' },
+    { name: 'My Files', href: '/dashboard/resources' },
     { name: 'Brainstorm', href: '/workflow/builder' },
     { name: 'AppScript', href: '/dashboard/appscript-builder' },
   ];
@@ -26,9 +26,9 @@ export function DashboardFooter() {
       </div>
 
       <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-16">
           {/* Brand Info */}
-          <div className="md:col-span-2 space-y-4">
+          <div className="col-span-2 md:col-span-2 space-y-4">
             <div className="font-bold text-xl font-aspekta flex items-center gap-3 text-white tracking-tight">
               <NextImage 
                 src="/logoku/logo-putih.svg" 
@@ -44,7 +44,7 @@ export function DashboardFooter() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <div className="col-span-1 space-y-4">
             <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Platform</h5>
             <ul className="space-y-3">
               {menuItems.slice(0, 3).map((item) => (
@@ -57,7 +57,7 @@ export function DashboardFooter() {
             </ul>
           </div>
 
-          <div className="space-y-4">
+          <div className="col-span-1 space-y-4">
             <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Tools</h5>
             <ul className="space-y-3">
               {menuItems.slice(3).map((item) => (
@@ -70,7 +70,7 @@ export function DashboardFooter() {
             </ul>
           </div>
 
-          <div className="md:col-span-2 lg:col-span-2 space-y-4">
+          <div className="col-span-2 md:col-span-2 lg:col-span-2 space-y-4">
             <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Support</h5>
             <div className="flex flex-col gap-3">
               <Link href="mailto:hello@techplan.com" className="text-sm font-bold text-blue-400 hover:text-blue-300 hover:underline transition-colors leading-none">

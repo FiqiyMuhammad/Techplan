@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { schedules } from "@/lib/db/schema";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function createSchedule(data: {
   title: string;
@@ -68,7 +68,7 @@ export async function updateSchedule(id: string, data: Partial<typeof schedules.
   if (!session?.user) throw new Error("Unauthorized");
 
   const [updated] = await db.update(schedules)
-    .set({ ...data })
+    .set({ ...data, updatedAt: new Date() })
     .where(and(eq(schedules.id, id), eq(schedules.userId, session.user.id)))
     .returning();
 

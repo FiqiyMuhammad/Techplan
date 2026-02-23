@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { getUsageStats, updateProfile } from "@/lib/actions/user-actions";
+import { getUsageStats, updateProfile, deleteAllUserData } from "@/lib/actions/user-actions";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,14 +16,18 @@ import {
   CameraIcon, 
   MailIcon, 
   Settings2Icon, 
-  ShieldCheckIcon,
   DownloadIcon,
   Trash2Icon,
   FolderIcon,
   FileTextIcon,
-  TrendingUpIcon
+  TrendingUpIcon,
+  CodeIcon,
+  BookOpenIcon,
+  SparklesIcon,
+  Loader2
 } from "lucide-react";
 import Image from "next/image";
+import ConfirmModal from "@/components/elements/ConfirmModal";
 
 interface ExtendedUser {
   id: string;
@@ -50,6 +54,9 @@ function SettingsContent() {
   const { data: session, isPending } = authClient.useSession();
   const [isUpdating, setIsUpdating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
   
   // Local state for form fields
   const [firstName, setFirstName] = useState("");
@@ -66,6 +73,7 @@ function SettingsContent() {
     };
     recentWorkflows?: { id: string; title: string; type: string; createdAt: Date }[];
     recentDocuments?: { id: string; title: string; type: string; createdAt: Date }[];
+    recentScripts?: { id: string; title: string; type: string; createdAt: Date }[];
   } | null>(null);
 
   // Fetch usage stats
@@ -73,7 +81,7 @@ function SettingsContent() {
     if (session?.user?.id) {
       getUsageStats().then(res => {
         if (res.success && res.data) {
-          setStats(res.data as any); // Use any for now to keep it simple as the type is complex
+          setStats(res.data as typeof stats);
         }
       });
     }
@@ -113,7 +121,7 @@ function SettingsContent() {
       if (res.success) {
         // Force client-side session update
         await authClient.getSession();
-        toast.success("Profile updated successfully");
+        toast.success("Profile updated successfully, please refresh page");
         router.refresh();
       } else {
         toast.error(res.error || "Failed to update profile");
@@ -166,6 +174,32 @@ function SettingsContent() {
     reader.readAsDataURL(file);
   };
 
+  const handleDeleteAllData = async () => {
+    setIsDeletingAll(true);
+    try {
+      const res = await deleteAllUserData();
+      if (res.success) {
+        toast.success("All data has been permanently deleted");
+        
+        // Refresh local stats
+        getUsageStats().then(res => {
+          if (res.success && res.data) {
+            setStats(res.data as typeof stats);
+          }
+        });
+        
+        setShowDeleteConfirm(false);
+      } else {
+        toast.error(res.error || "Failed to delete data");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred");
+      console.error(error);
+    } finally {
+      setIsDeletingAll(false);
+    }
+  };
+
   if (isPending) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -196,23 +230,23 @@ function SettingsContent() {
         }} 
         className="w-full"
       >
-        <div className="flex justify-center mb-16">
-            <TabsList className="bg-gray-100/80 dark:bg-gray-800/50 p-2 rounded-[22px] w-fit inline-flex gap-2 h-auto border-none shadow-none scale-110">
+        <div className="flex justify-center mb-10 md:mb-16">
+            <TabsList className="bg-gray-100/80 dark:bg-gray-800/50 p-1.5 md:p-2 rounded-[22px] w-full md:w-fit flex md:inline-flex gap-1.5 md:gap-2 h-auto border-none shadow-none md:scale-110 overflow-x-auto no-scrollbar">
               <TabsTrigger 
                 value="user-setting" 
-                className="rounded-[18px] px-12 py-3.5 text-base font-semibold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="rounded-[18px] px-4 md:px-12 py-2.5 md:py-3.5 text-[13px] md:text-base font-bold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
               >
                 User Setting
               </TabsTrigger>
               <TabsTrigger 
                 value="data-usage" 
-                className="rounded-[18px] px-12 py-3.5 text-base font-semibold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="rounded-[18px] px-4 md:px-12 py-2.5 md:py-3.5 text-[13px] md:text-base font-bold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
               >
-                Data Usage
+                Files setting
               </TabsTrigger>
               <TabsTrigger 
                 value="subscription" 
-                className="rounded-[18px] px-12 py-3.5 text-base font-semibold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                className="rounded-[18px] px-4 md:px-12 py-2.5 md:py-3.5 text-[13px] md:text-base font-bold transition-all data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-gray-900 dark:data-[state=active]:text-white data-[state=active]:shadow-xl border-none text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 whitespace-nowrap"
               >
                 Subscription
               </TabsTrigger>
@@ -249,22 +283,7 @@ function SettingsContent() {
                 </CardContent>
               </Card>
 
-              <Card className="border-gray-200 dark:border-gray-800 shadow-sm bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-lg flex items-center gap-2 text-gray-900 dark:text-white">
-                    <ShieldCheckIcon className="w-5 h-5 text-blue-600" />
-                    Security
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start gap-2 text-sm font-semibold border-gray-100 dark:border-gray-800">
-                        Two-Factor Auth
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start gap-2 text-sm font-semibold border-gray-100 dark:border-gray-800 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10">
-                        Delete Account
-                    </Button>
-                </CardContent>
-              </Card>
+
             </div>
 
             <div className="md:col-span-2 space-y-6">
@@ -333,7 +352,7 @@ function SettingsContent() {
         {/* Tab 2: Data Usage */}
         <TabsContent value="data-usage" className="mt-0 space-y-8">
           <div className="text-center space-y-1 mb-8">
-             <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-aspekta">Data Usage</h2>
+             <h2 className="text-2xl font-bold text-gray-900 dark:text-white font-aspekta">Files setting</h2>
              <p className="text-gray-500 dark:text-gray-400 font-medium">View your usage statistics and data limits</p>
           </div>
 
@@ -349,11 +368,7 @@ function SettingsContent() {
                             <FolderIcon className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="mt-8 flex justify-center">
-                        <Button variant="ghost" className="text-blue-600 font-bold hover:bg-blue-50 text-sm gap-2">
-                           View All Projects <TrendingUpIcon className="w-4 h-4 translate-y-[-1px]" />
-                        </Button>
-                    </div>
+
                 </CardContent>
              </Card>
 
@@ -368,9 +383,7 @@ function SettingsContent() {
                             <FileTextIcon className="w-6 h-6" />
                         </div>
                     </div>
-                    <div className="mt-8 text-center text-sm font-bold text-gray-400">
-                        Generated across all projects
-                    </div>
+
                 </CardContent>
              </Card>
           </div>
@@ -380,28 +393,34 @@ function SettingsContent() {
                 <CardHeader className="pb-2 border-b border-gray-50 dark:border-gray-800">
                     <CardTitle className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <FolderIcon className="w-5 h-5 text-blue-600" />
-                        Resource Summary
+                        Files Summary
                     </CardTitle>
                     <CardDescription>Recent projects and documents created on your account.</CardDescription>
                 </CardHeader>
                 <CardContent className="p-0">
-                    {!stats?.recentWorkflows?.length && !stats?.recentDocuments?.length ? (
-                        <div className="p-12 text-center space-y-3 opacity-40">
-                            <FolderIcon className="w-12 h-12 mx-auto text-gray-300" />
-                            <p className="text-xs font-bold uppercase tracking-widest text-gray-500">No resources created yet</p>
+                    {!stats?.recentWorkflows?.length && !stats?.recentDocuments?.length && !stats?.recentScripts?.length ? (
+                        <div className="py-20 flex flex-col items-center justify-center text-center">
+                           <div className="w-16 h-16 rounded-2xl bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center mb-4 border border-gray-100 dark:border-gray-800 shadow-sm">
+                              <FolderIcon className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+                           </div>
+                           <p className="text-sm font-bold text-gray-400 dark:text-gray-500 tracking-tight">No files created yet</p>
+                           <p className="text-xs text-gray-300 dark:text-gray-600 mt-1 italic font-medium">Your collection is currently empty.</p>
                         </div>
                     ) : (
-                        <div className="divide-y divide-gray-50 dark:divide-gray-800">
-                            {[...(stats?.recentWorkflows || []), ...(stats?.recentDocuments || [])]
+                        <div className="divide-y divide-gray-50 dark:divide-gray-800 max-h-[400px] overflow-y-auto custom-scrollbar">
+                            {[...(stats?.recentWorkflows || []), ...(stats?.recentDocuments || []), ...(stats?.recentScripts || [])]
                                 .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-                                .slice(0, 5)
                                 .map((item) => (
                                 <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-default group">
                                     <div className="flex items-center gap-4">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                                            item.type === 'workflow' ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600' : 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'
+                                            item.type === 'workflow' ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-600' : 
+                                            item.type === 'script' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' :
+                                            'bg-blue-50 dark:bg-blue-900/20 text-blue-600'
                                         }`}>
-                                            {item.type === 'workflow' ? <TrendingUpIcon className="w-5 h-5" /> : <FileTextIcon className="w-5 h-5" />}
+                                            {item.type === 'workflow' ? <SparklesIcon className="w-5 h-5" /> : 
+                                             item.type === 'script' ? <CodeIcon className="w-5 h-5" /> :
+                                             <BookOpenIcon className="w-5 h-5" />}
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">{item.title}</p>
@@ -418,24 +437,9 @@ function SettingsContent() {
                 </CardContent>
              </Card>
 
-             <Card className="border-gray-100 dark:border-gray-800/50 shadow-sm bg-white dark:bg-gray-950">
-                <CardContent className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center">
-                            <DownloadIcon className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-gray-900 dark:text-white">Download All Data</h4>
-                            <p className="text-xs text-gray-500 font-medium">Export all your projects as a ZIP with folders and markdown files</p>
-                        </div>
-                    </div>
-                    <Button variant="outline" className="rounded-xl border-blue-200 dark:border-blue-900/30 text-blue-600 font-bold hover:bg-blue-50 gap-2">
-                        <DownloadIcon className="w-4 h-4" /> Export
-                    </Button>
-                </CardContent>
-             </Card>
 
-             <Card className="border-red-100 dark:border-red-900/20 shadow-sm bg-red-50/10 dark:bg-red-900/5">
+
+              <Card className="border-red-100 dark:border-red-900/20 shadow-sm bg-red-50/10 dark:bg-red-900/5">
                 <CardContent className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/20 text-red-600 flex items-center justify-center">
@@ -446,11 +450,25 @@ function SettingsContent() {
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-medium font-geist">Permanently delete all your projects and documents</p>
                         </div>
                     </div>
-                    <Button variant="destructive" className="rounded-xl font-bold gap-2 bg-red-500 hover:bg-red-600">
+                    <Button 
+                      variant="destructive" 
+                      className="rounded-lg font-bold gap-2 bg-red-500 hover:bg-red-600"
+                      onClick={() => setShowDeleteConfirm(true)}
+                    >
                         <Trash2Icon className="w-4 h-4" /> Delete All
                     </Button>
                 </CardContent>
              </Card>
+
+             <ConfirmModal 
+                isOpen={showDeleteConfirm} 
+                onClose={() => setShowDeleteConfirm(false)} 
+                onConfirm={handleDeleteAllData}
+                title="Are you sure?"
+                description="This action is permanent and will delete all your projects, documents, brainstorms, and scripts. You cannot undo this."
+                confirmText={isDeletingAll ? "Deleting..." : "Yes, Delete All Files"}
+                cancelText="No, Keep My Data"
+             />
           </div>
         </TabsContent>
 
@@ -476,27 +494,27 @@ function SettingsContent() {
                               cx="96" 
                               cy="96" 
                               r="80" 
-                              stroke="#4F46E5" 
+                              stroke="#365B80" 
                               strokeWidth="16" 
                               fill="transparent" 
                               strokeDasharray="502.6" 
-                              strokeDashoffset={502.6 - (502.6 * (stats?.subscription?.creditsUsed || 0)) / (stats?.subscription?.creditsTotal || 120)} 
+                              strokeDashoffset={502.6 - (502.6 * (stats?.subscription?.creditsUsed || 0)) / (stats?.subscription?.creditsTotal || 100)} 
                               strokeLinecap="round" 
                               className="transition-all duration-1000 ease-in-out" 
                             />
                          </svg>
                          <div className="absolute inset-0 flex flex-col items-center justify-center">
                             <span className="text-5xl font-bold text-gray-900 dark:text-white leading-none">{stats?.subscription?.creditsUsed || 0}</span>
-                            <span className="text-sm font-bold text-gray-400 dark:text-gray-500 mt-2">/ {stats?.subscription?.creditsTotal || 120}</span>
+                            <span className="text-sm font-bold text-gray-400 dark:text-gray-500 mt-2">/ {stats?.subscription?.creditsTotal || 100}</span>
                          </div>
                       </div>
 
                       <div className="text-center space-y-1">
                          <p className="text-sm font-bold text-gray-900 dark:text-white">
-                            {((stats?.subscription?.creditsUsed || 0) / (stats?.subscription?.creditsTotal || 120) * 100).toFixed(1)}% of monthly limit used
+                            {((stats?.subscription?.creditsUsed || 0) / (stats?.subscription?.creditsTotal || 100) * 100).toFixed(1)}% of monthly limit used
                          </p>
                          <div className="flex gap-4 items-center justify-center text-xs font-bold text-gray-400 uppercase tracking-tighter">
-                            <span>Credits remaining: {(stats?.subscription?.creditsTotal || 120) - (stats?.subscription?.creditsUsed || 0)}</span>
+                            <span>Credits remaining: {(stats?.subscription?.creditsTotal || 100) - (stats?.subscription?.creditsUsed || 0)}</span>
                          </div>
                       </div>
                   </CardContent>
@@ -596,8 +614,8 @@ function SettingsContent() {
                                 You are currently on the free tier. Upgrade to the Pro plan to unlock unlimited codespace tasks and premium features.
                             </p>
                         </div>
-                        <Button className="h-12 px-8 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl shadow-lg shadow-blue-600/20 gap-2 shrink-0">
-                           <TrendingUpIcon className="w-5 h-5" /> Upgrade to Pro
+                        <Button className="h-10 px-6 bg-[#365B80] hover:bg-[#2d4d6d] text-white font-semibold text-sm rounded-xl shadow-lg shrink-0 border-none">
+                           Upgrade to Pro
                         </Button>
                     </CardContent>
                 </Card>

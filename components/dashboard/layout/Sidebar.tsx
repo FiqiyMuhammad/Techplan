@@ -39,7 +39,7 @@ const menuItems: MenuItem[] = [
   { name: 'AppScript', icon: CodeBracketIcon, href: '/dashboard/appscript-builder' },
   { name: 'Schedule', icon: CalendarIcon, href: '/dashboard/schedule' },
   { name: 'Brainstorm', icon: ChatBubbleBottomCenterTextIcon, href: '/dashboard/analytics' },
-  { name: 'Resources', icon: FolderIcon, href: '/dashboard/resources' },
+  { name: 'My Files', icon: FolderIcon, href: '/dashboard/resources' },
   { name: 'Game', icon: PuzzlePieceIcon, href: '/game/pacman' },
   { 
     name: 'Settings', 
@@ -47,7 +47,7 @@ const menuItems: MenuItem[] = [
     href: '/dashboard/settings',
     children: [
       { name: 'Account Setting', icon: UserIcon, href: '/dashboard/settings?tab=user-setting' },
-      { name: 'Data Usage', icon: DatabaseIcon, href: '/dashboard/settings?tab=data-usage' },
+      { name: 'Files setting', icon: DatabaseIcon, href: '/dashboard/settings?tab=data-usage' },
       { name: 'Subscription', icon: CreditCardIcon, href: '/dashboard/settings?tab=subscription' },
     ]
   },
@@ -78,57 +78,91 @@ const sidebarItemVariants = {
 };
 
 export default function Sidebar() {
-  const { isCollapsed, toggleSidebar } = useSidebarStore();
+  const { isCollapsed, toggleSidebar, isMobileOpen, toggleMobileSidebar, setMobileOpen } = useSidebarStore();
+  const pathname = usePathname();
+
+  // Close mobile sidebar on route change
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname, setMobileOpen]);
 
   return (
     <>
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={toggleMobileSidebar}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] md:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       <motion.aside
-        className={`fixed left-0 top-0 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col z-50 transition-all duration-300 ${
-          isCollapsed ? 'w-20' : 'w-64'
-        }`}
+        className={`fixed left-0 top-0 h-screen bg-white dark:bg-gray-900 flex flex-col z-[110] transition-all duration-300 shadow-xl shadow-gray-900/5 dark:shadow-none ${
+          isCollapsed ? 'md:w-20' : 'md:w-64'
+        } ${isMobileOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0'}`}
         initial={false}
       >
         {/* Branding */}
-        <div className={`h-14 flex items-center border-b border-gray-100 dark:border-gray-800 transition-all duration-300 ${isCollapsed ? 'justify-between px-3' : 'justify-between px-6'}`}>
-          {isCollapsed ? (
-            <>
-              <Link href="/" className="group/logo relative z-10 shrink-0">
-                <Image 
-                  src="/logoku/logo1/logo-aja.svg" 
-                  alt="TechPlan Logo" 
-                  width={28} 
-                  height={28} 
-                  className="w-7 h-7 object-contain hover:scale-110 transition-transform"
-                  priority
-                />
-              </Link>
-              <button 
-                onClick={toggleSidebar} 
-                className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors focus:outline-none shrink-0"
-              >
-                <ChevronDoubleRightIcon className="w-4 h-4" />
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/" className="flex items-center gap-2 group/logo hover:opacity-80 transition-all">
-                <Image 
-                  src="/logoku/logo1/logo-full.svg" 
-                  alt="TechPlan Logo" 
-                  width={140} 
-                  height={40} 
-                  className="h-8 w-auto object-contain" 
-                  priority
-                />
-              </Link>
-              <button 
-                onClick={toggleSidebar} 
-                className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors focus:outline-none"
-              >
-                <ChevronDoubleLeftIcon className="w-4 h-4" />
-              </button>
-            </>
-          )}
+        <div className={`h-14 flex items-center transition-all duration-300 ${isCollapsed ? 'md:justify-between px-3' : 'justify-between px-6'}`}>
+          <div className="flex items-center gap-2">
+            {/* Desktop Branding */}
+            <div className="hidden md:flex items-center">
+              {isCollapsed ? (
+                <Link href="/" className="group/logo relative z-10 shrink-0">
+                  <Image 
+                    src="/logoku/logo1/logo-aja.svg" 
+                    alt="TechPlan Logo" 
+                    width={28} 
+                    height={28} 
+                    className="w-7 h-7 object-contain hover:scale-110 transition-transform"
+                    priority
+                  />
+                </Link>
+              ) : (
+                <Link href="/" className="flex items-center gap-2 group/logo hover:opacity-80 transition-all">
+                  <Image 
+                    src="/logoku/logo1/logo-full.svg" 
+                    alt="TechPlan Logo" 
+                    width={140} 
+                    height={40} 
+                    className="h-8 w-auto object-contain" 
+                    priority
+                  />
+                </Link>
+              )}
+            </div>
+            
+            {/* Mobile Branding - Always Full Logo */}
+            <Link href="/" className="flex items-center gap-2 group/logo hover:opacity-80 transition-all md:hidden">
+              <Image 
+                src="/logoku/logo1/logo-full.svg" 
+                alt="TechPlan Logo" 
+                width={140} 
+                height={40} 
+                className="h-8 w-auto object-contain" 
+                priority
+              />
+            </Link>
+          </div>
+
+          <button 
+            onClick={toggleSidebar} 
+            className="hidden md:flex p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors focus:outline-none"
+          >
+            {isCollapsed ? <ChevronDoubleRightIcon className="w-4 h-4" /> : <ChevronDoubleLeftIcon className="w-4 h-4" />}
+          </button>
+          
+          <button 
+            onClick={toggleMobileSidebar}
+            className="md:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 transition-colors focus:outline-none"
+          >
+            <ChevronDoubleLeftIcon className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Navigation */}
@@ -161,6 +195,9 @@ function SidebarItem({ item, isCollapsed }: { item: MenuItem, isCollapsed: boole
     if (isCollapsed) setIsOpen(false);
   }, [isCollapsed]);
 
+  // Handle collapsed state effectively for mobile (mobile is never collapsed in view)
+  const effectiveCollapsed = isCollapsed;
+
   return (
     <div className="space-y-1">
       <div
@@ -175,26 +212,24 @@ function SidebarItem({ item, isCollapsed }: { item: MenuItem, isCollapsed: boole
               isActive && !isOpen
                 ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
                 : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50/80 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-white'
-            } ${isCollapsed ? 'justify-center px-2' : ''}`}
+            } ${effectiveCollapsed ? 'md:justify-center md:px-2' : ''}`}
           >
             <item.icon className={`w-5 h-5 flex-shrink-0 transition-colors duration-300 ${isActive ? 'text-blue-600' : 'group-hover:text-gray-900 dark:group-hover:text-white'}`} />
-            {!isCollapsed && (
-              <>
-                <div className="flex-1 text-[15px] font-medium font-geist overflow-hidden select-none">
-                  {isHovered ? (
-                    <RollingText 
-                      text={item.name} 
-                      className="leading-tight text-gray-900 dark:text-white"
-                      transition={{ duration: 0.2, delay: 0.02, ease: "easeOut" }} 
-                    />
-                  ) : (
-                    <span className="inline-block leading-tight">
-                      {item.name}
-                    </span>
-                  )}
-                </div>
-                <ChevronDownIcon className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-              </>
+            <div className={`flex-1 text-[15px] font-medium font-geist overflow-hidden select-none ${effectiveCollapsed ? 'md:hidden' : 'block'}`}>
+              {isHovered ? (
+                <RollingText 
+                  text={item.name} 
+                  className="leading-tight text-gray-900 dark:text-white"
+                  transition={{ duration: 0.2, delay: 0.02, ease: "easeOut" }} 
+                />
+              ) : (
+                <span className="inline-block leading-tight">
+                  {item.name}
+                </span>
+              )}
+            </div>
+            {(isOpen || !effectiveCollapsed) && (
+              <ChevronDownIcon className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} ${effectiveCollapsed ? 'md:hidden' : 'block'}`} />
             )}
           </div>
         ) : (
@@ -204,24 +239,22 @@ function SidebarItem({ item, isCollapsed }: { item: MenuItem, isCollapsed: boole
                 isActive
                   ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
                   : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50/80 dark:hover:bg-gray-800/80 hover:text-gray-900 dark:hover:text-white'
-              } ${isCollapsed ? 'justify-center px-2' : ''}`}
+              } ${effectiveCollapsed ? 'md:justify-center md:px-2' : ''}`}
             >
               <item.icon className={`w-5 h-5 flex-shrink-0 transition-colors duration-300 ${isActive ? 'text-blue-600' : 'group-hover:text-gray-900 dark:group-hover:text-white'}`} />
-              {!isCollapsed && (
-                <div className="text-[15px] font-medium font-geist overflow-hidden select-none">
-                  {isHovered ? (
-                    <RollingText 
-                      text={item.name} 
-                      className="leading-tight text-gray-900 dark:text-white"
-                      transition={{ duration: 0.2, delay: 0.02, ease: "easeOut" }} 
-                    />
-                  ) : (
-                    <span className="inline-block leading-tight">
-                      {item.name}
-                    </span>
-                  )}
-                </div>
-              )}
+              <div className={`text-[15px] font-medium font-geist overflow-hidden select-none ${effectiveCollapsed ? 'md:hidden' : 'block'}`}>
+                {isHovered ? (
+                  <RollingText 
+                    text={item.name} 
+                    className="leading-tight text-gray-900 dark:text-white"
+                    transition={{ duration: 0.2, delay: 0.02, ease: "easeOut" }} 
+                  />
+                ) : (
+                  <span className="inline-block leading-tight">
+                    {item.name}
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
         )}
@@ -229,13 +262,13 @@ function SidebarItem({ item, isCollapsed }: { item: MenuItem, isCollapsed: boole
 
       {item.children && (
         <AnimatePresence>
-          {isOpen && !isCollapsed && (
+          {isOpen && (
             <motion.div 
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="ml-9 space-y-1 overflow-hidden"
+              className={`ml-9 space-y-1 overflow-hidden ${effectiveCollapsed ? 'md:hidden' : 'block'}`}
             >
               {item.children.map((child) => (
                   <Link 

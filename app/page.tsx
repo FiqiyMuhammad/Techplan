@@ -2,12 +2,12 @@
 
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/fragments/Hero";
+import { BentoDemo as Problem } from "@/components/fragments/BentoGrid";
 import Integrations from "@/components/fragments/Integrations";
-import Problem from "@/components/fragments/Problem";
 import Instruction from "@/components/fragments/Instruction";
 import SoftwareV2 from "@/components/fragments/SoftwareV2";
-import Extension from "@/components/fragments/Extension";
 import FAQ from "@/components/fragments/FAQ";
+import Pricing from "@/components/fragments/Pricing";
 import Footer from "@/components/layout/Footer";
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
       <SoftwareV2 />
       <Problem />
       <Integrations />
-      <Extension />
+      <Pricing />
       <FAQ />
       <Footer />
     </main>

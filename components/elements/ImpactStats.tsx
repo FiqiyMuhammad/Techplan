@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { getDashboardStats } from "@/lib/actions/stats-actions";
 import { 
@@ -10,6 +9,7 @@ import {
   BoltIcon,
   CircleStackIcon
 } from "@heroicons/react/24/outline";
+import { useQuery } from "@tanstack/react-query";
 
 interface DashboardStats {
   curriculums: number;
@@ -20,19 +20,14 @@ interface DashboardStats {
 }
 
 export default function ImpactStats() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchStats() {
+  const { data: stats, isLoading: loading } = useQuery({
+    queryKey: ["dashboard-stats"],
+    queryFn: async () => {
       const res = await getDashboardStats();
-      if (res.success && res.data) {
-        setStats(res.data as DashboardStats);
-      }
-      setLoading(false);
-    }
-    fetchStats();
-  }, []);
+      return res.success ? (res.data as DashboardStats) : null;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 
   if (loading) return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-pulse">

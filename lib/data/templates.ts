@@ -12,46 +12,46 @@ export const CURRICULUM_TEMPLATES: Template[] = [
   {
     id: "curr-1",
     title: "Pelatihan K3 Konstruksi",
-    description: "Kurikulum standar keselamatan kerja untuk proyek bangunan.",
+    description: "Rencana pelatihan keselamatan kerja untuk proyek bangunan.",
     category: "curriculum",
-    prompt: "I want to build a training plan for K3 Konstruksi (Construction Health and Safety). Focus on high-rise building safety, personal protective equipment, and emergency response for a 3-day workshop."
+    prompt: "Buatkan rencana pelatihan untuk K3 Konstruksi. Fokus pada keselamatan gedung tinggi, penggunaan alat pelindung diri, dan tanggap darurat untuk workshop selama 11 pertemuan."
   },
   {
     id: "curr-2",
     title: "Bahasa Inggris Dasar Grade 1",
-    description: "Kurikulum interaktif untuk anak sekolah dasar.",
+    description: "Rencana pembelajaran interaktif untuk anak sekolah dasar.",
     category: "curriculum",
-    prompt: "I want to build a curriculum for Grade 1 English. Focus on phonics, greetings, and basic vocabulary (colors, animals) using a play-based learning approach for a 4-week term."
+    prompt: "Buatkan kurikulum Bahasa Inggris untuk kelas 1 SD. Fokus pada pengenalan bunyi (phonics), sapaan, dan kosakata dasar seperti warna dan hewan dengan metode belajar sambil bermain selama 4 minggu."
   },
   {
     id: "curr-3",
     title: "Onboarding Admin Baru",
     description: "Rencana pelatihan operasional kantor.",
     category: "curriculum",
-    prompt: "I want to build a professional training plan for a New Operational Admin. Include document management, office software proficiency, and internal communication protocols for the first 2 weeks."
+    prompt: "Buatkan rencana pelatihan untuk Admin Operasional baru. Masukkan materi pengelolaan dokumen, penggunaan perangkat lunak kantor, dan tata cara komunikasi internal untuk 2 minggu pertama."
   }
 ];
 
 export const APPSCRIPT_TEMPLATES: Template[] = [
   {
     id: "as-1",
-    title: "Otomasi Laporan Bulanan",
-    description: "Generate PDF dari Google Sheets secara otomatis.",
+    title: "Formulir Input Data",
+    description: "Aplikasi web untuk input data ke Google Sheets.",
     category: "appscript",
-    prompt: "I want a script that automatically generates a PDF report from the 'Monthly Summary' sheet and sends it to my email every first day of the month."
+    prompt: "Buatkan formulir input data karyawan dengan latar belakang cerah. Form ini meminta Nama, Email, dan Departemen. Munculkan pesan konfirmasi setelah data berhasil disimpan. Pastikan posisi formulir berada tepat di tengah layar."
   },
   {
     id: "as-2",
-    title: "Sinkronisasi Agenda ke Drive",
-    description: "Simpan detail meeting Kalender ke berkas teks.",
+    title: "Dashboard Rekap Data",
+    description: "Menampilkan data Sheets dengan tabel interaktif.",
     category: "appscript",
-    prompt: "I want a script that fetches all events from my Google Calendar for today and creates a daily log file in a specific Google Drive folder named 'Calendar Logs'."
+    prompt: "Buatkan sistem rekap keuangan (Pemasukan/Pengeluaran). Di bagian atas, buatkan formulir input untuk menambah transaksi (Tanggal, Deskripsi, Jumlah, Tipe). Di bawahnya, tampilkan ringkasan Saldo. Paling bawah, buatkan tabel data yang jelas dengan fitur pencarian. Pastikan ada tombol Simpan yang bekerja sempurna."
   },
   {
     id: "as-3",
-    title: "Pembersih Spreadsheet",
-    description: "Hapus baris kosong dan duplikat secara instan.",
+    title: "Sistem Absensi (Check-in)",
+    description: "Aplikasi web absensi dengan jam otomatis.",
     category: "appscript",
-    prompt: "I want a script that cleans my active spreadsheet by removing all empty rows and highlighting duplicate values in Column A with a red background."
+    prompt: "Buatkan aplikasi Absensi Shift Kerja. Tampilkan tombol 'Check-in' dengan warna biru dan sertakan jam yang berjalan otomatis di layar. Setelah tombol diklik, tampilkan pesan sukses dan simpan data Nama, Shift, dan Waktu ke Google Sheet."
   }
 ];

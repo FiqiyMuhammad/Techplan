@@ -1,7 +1,7 @@
 
 export interface Message {
   role: "user" | "assistant" | "system";
-  content: string;
+  content: string | Array<{ type: string; text?: string; image_url?: { url: string } }>;
 }
 
 const PROVIDERS = {
@@ -96,8 +96,8 @@ async function executeCall(messages: Message[], model: string, providerKey: keyo
     body: JSON.stringify({
       model: model,
       messages: messages,
-      temperature: 0.7,
-      max_tokens: 4000,
+      temperature: 0.3,
+      max_tokens: 6000,
     }),
   });
 

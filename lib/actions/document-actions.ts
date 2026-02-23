@@ -56,3 +56,26 @@ export async function deleteDocument(id: string) {
 
   return { success: true };
 }
+
+export async function updateDocument(id: string, data: {
+  title?: string;
+  content?: string;
+  type?: string;
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user) throw new Error("Unauthorized");
+
+  await db.update(documents)
+    .set({
+      ...(data.title && { title: data.title }),
+      ...(data.content && { content: data.content }),
+      ...(data.type && { type: data.type }),
+      updatedAt: new Date()
+    })
+    .where(and(eq(documents.id, id), eq(documents.userId, session.user.id)));
+
+  return { success: true };
+}

@@ -14,6 +14,7 @@ import {
   setYear,
   parseISO
 } from "date-fns";
+import { Loader2 } from "lucide-react";
 import { 
   DndContext, 
   pointerWithin,
@@ -35,11 +36,17 @@ import {
   useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { PlusIcon, XMarkIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { 
+  PlusIcon, 
+  XMarkIcon, 
+  CalendarDaysIcon,
+  ClockIcon
+} from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import Modal from "@/components/elements/Modal";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -75,9 +82,48 @@ const TASK_COLORS = [
 ];
 
 // --- Components ---
-const TaskCard = ({ task, isOverlay, onDelete, onClick }: { task: Task, isOverlay?: boolean, onDelete?: (id: string) => void, onClick?: (task: Task) => void }) => {
+const TaskCard = ({ task, isOverlay, variant = 'minimal', onDelete, onClick }: { task: Task, isOverlay?: boolean, variant?: 'minimal' | 'detailed', onDelete?: (id: string) => void, onClick?: (task: Task) => void }) => {
   const theme = TASK_COLORS.find(c => c.id === task.color) || TASK_COLORS[2];
   
+  if (variant === 'detailed') {
+    return (
+      <div 
+        onClick={(e) => {
+          if (!isOverlay && onClick) {
+              e.stopPropagation();
+              onClick(task);
+          }
+        }}
+        className={`
+        p-3 mb-2 rounded-lg transition-all group relative border ${theme.border} ${theme.bg} ${theme.text}
+        ${isOverlay ? 'cursor-grabbing scale-105 shadow-xl rotate-1 z-50' : 'cursor-grab hover:shadow-md'}
+        flex flex-col gap-1.5 shadow-sm
+      `}>
+         <div className="flex items-start gap-2.5">
+            <div className={`w-1.5 h-4 rounded-full bg-current opacity-60 mt-0.5`} />
+            <span className="font-semibold flex-1 text-[14px] leading-tight break-words">{task.title}</span>
+         </div>
+
+         {task.time && (
+            <div className="flex items-center gap-1.5 text-[13px] font-bold opacity-60 ml-0.5">
+              <ClockIcon className="w-3.5 h-3.5" />
+              <span>{task.time}</span>
+            </div>
+         )}
+
+         {!isOverlay && onDelete && (
+            <button 
+               onPointerDown={(e) => e.stopPropagation()}
+               onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
+               className="opacity-0 group-hover:opacity-100 p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-all absolute top-2 right-2"
+            >
+               <XMarkIcon className="w-3.5 h-3.5" />
+            </button>
+         )}
+      </div>
+    );
+  }
+
   return (
     <div 
       onClick={(e) => {
@@ -107,7 +153,7 @@ const TaskCard = ({ task, isOverlay, onDelete, onClick }: { task: Task, isOverla
   );
 };
 
-function SortableTask({ task, onDelete, onClick }: { task: Task, onDelete?: (id: string) => void, onClick?: (task: Task) => void }) {
+function SortableTask({ task, onDelete, onClick, variant }: { task: Task, variant?: 'minimal' | 'detailed', onDelete?: (id: string) => void, onClick?: (task: Task) => void }) {
   const {
     attributes,
     listeners,
@@ -125,7 +171,7 @@ function SortableTask({ task, onDelete, onClick }: { task: Task, onDelete?: (id:
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <TaskCard task={task} onDelete={onDelete} onClick={onClick} />
+      <TaskCard task={task} variant={variant} onDelete={onDelete} onClick={onClick} />
     </div>
   );
 }
@@ -173,6 +219,7 @@ export default function SchedulePage() {
   const [editType, setEditType] = useState<"online" | "offline" | "hybrid">("online");
   const [editColor, setEditColor] = useState("blue");
   const [editNotes, setEditNotes] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -278,6 +325,7 @@ export default function SchedulePage() {
         notes: newTaskNotes
     };
 
+    setIsSaving(true);
     try {
         const newDbTask = await createSchedule(taskData);
         const newTask: Task = {
@@ -303,6 +351,8 @@ export default function SchedulePage() {
         toast.error("Gagal menyimpan event", {
             description: "Terjadi kesalahan saat menghubungi server."
         });
+    } finally {
+        setIsSaving(false);
     }
   };
 
@@ -339,6 +389,7 @@ export default function SchedulePage() {
         notes: editNotes
     };
 
+    setIsSaving(true);
     try {
         const result = await updateSchedule(selectedTask.id, updatedData);
         if (result) {
@@ -359,6 +410,8 @@ export default function SchedulePage() {
     } catch (error) {
         console.error("Failed to update task:", error);
         toast.error("Failed to update event");
+    } finally {
+        setIsSaving(false);
     }
   };
 
@@ -459,6 +512,7 @@ export default function SchedulePage() {
                                         <SortableTask 
                                             key={task.id} 
                                             task={task} 
+                                            variant="detailed"
                                             onDelete={handleDeleteTask} 
                                             onClick={setSelectedTask} 
                                         />
@@ -497,6 +551,7 @@ export default function SchedulePage() {
                                 <SortableTask 
                                     key={task.id} 
                                     task={task} 
+                                    variant="detailed"
                                     onDelete={handleDeleteTask} 
                                     onClick={setSelectedTask}
                                 />
@@ -516,21 +571,21 @@ export default function SchedulePage() {
   };
 
   return (
-    <div className="p-8 pb-32 space-y-8 min-h-screen">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="p-4 md:p-8 pb-32 space-y-4 md:space-y-8 min-h-screen">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="flex flex-col gap-1">
-             <div className="flex items-center gap-4 text-5xl font-bold font-aspekta tracking-tighter leading-none">
+             <div className="flex items-center gap-3 md:gap-4 text-3xl md:text-5xl font-bold font-aspekta tracking-tighter leading-none">
                <span className="text-black dark:text-white">{format(currentDate, 'MMMM')}</span>
                <span className="text-gray-200 dark:text-gray-700 font-light -mt-2">/</span>
                <span className="text-gray-300 dark:text-gray-600">{format(currentDate, 'yyyy')}</span>
              </div>
-             <p className="text-gray-400 dark:text-gray-500 font-geist text-sm mt-2 font-medium italic">Manage your teaching schedule and sessions.</p>
+             <p className="text-gray-400 dark:text-gray-500 font-geist text-xs md:text-sm mt-1 md:mt-2 font-medium italic">Manage your teaching schedule and sessions.</p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 p-1.5 bg-gray-100/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex items-center gap-2 p-1.5 bg-gray-100/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50 w-full sm:w-auto">
              <Select value={String(currentDate.getMonth())} onValueChange={(val) => setCurrentDate(setMonth(currentDate, parseInt(val)))}>
-               <SelectTrigger className="w-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 h-9 rounded-lg text-sm font-medium font-inter focus:ring-0 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+               <SelectTrigger className="flex-1 sm:w-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-3 md:px-4 h-9 rounded-lg text-xs md:text-sm font-medium font-inter focus:ring-0 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
                  <SelectValue />
                </SelectTrigger>
                <SelectContent position="popper" sideOffset={4}>
@@ -541,7 +596,7 @@ export default function SchedulePage() {
              </Select>
              
              <Select value={String(currentDate.getFullYear())} onValueChange={(val) => setCurrentDate(setYear(currentDate, parseInt(val)))}>
-               <SelectTrigger className="w-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-4 h-9 rounded-lg text-sm font-medium font-inter focus:ring-0 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+               <SelectTrigger className="w-24 sm:w-auto bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 px-3 md:px-4 h-9 rounded-lg text-xs md:text-sm font-medium font-inter focus:ring-0 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
                  <SelectValue />
                </SelectTrigger>
                <SelectContent position="popper" sideOffset={4}>
@@ -552,14 +607,14 @@ export default function SchedulePage() {
              </Select>
           </div>
 
-          <div className="h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-1"></div>
+          <div className="hidden sm:block h-8 w-[1px] bg-gray-200 dark:bg-gray-700 mx-1"></div>
 
-          <div className="flex bg-gray-50/80 dark:bg-gray-800/50 p-1.5 rounded-full items-center border border-gray-100/50 dark:border-gray-700/50 h-12 shadow-sm relative">
+          <div className="flex bg-gray-50/80 dark:bg-gray-800/50 p-1 rounded-full items-center border border-gray-100/50 dark:border-gray-700/50 h-11 md:h-12 shadow-sm relative w-full sm:w-auto">
             {(['month', 'week', 'day'] as const).map((v) => (
                <button
                  key={v}
                  onClick={() => setView(v)}
-                 className={`relative px-6 py-2 text-sm font-bold font-inter capitalize rounded-full transition-all z-10 ${
+                 className={`relative flex-1 sm:px-6 py-2 text-[11px] md:text-sm font-bold font-inter capitalize rounded-full transition-all z-10 ${
                    view === v 
                    ? 'text-gray-900 dark:text-white' 
                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
@@ -576,24 +631,38 @@ export default function SchedulePage() {
                </button>
             ))}
           </div>
-          </div>
 
           <button 
              onClick={openAddModal}
-             className="h-10 px-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full text-xs font-bold flex items-center gap-2 hover:shadow-lg hover:scale-105 transition-all shadow-md active:scale-95"
+             className="h-10 md:h-10 px-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full text-xs font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:scale-105 transition-all shadow-md active:scale-95 w-full sm:w-auto"
           >
              <PlusIcon className="w-4 h-4" />
-             <span className="hidden md:inline">Add Task</span>
+             <span>Add Task</span>
           </button>
         </div>
+      </div>
 
       <motion.div 
         key={view + currentDate.toISOString()}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-950 rounded-xl border border-gray-100/50 dark:border-gray-800 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col min-h-[700px] relative"
+        className="bg-white dark:bg-gray-950 rounded-xl border border-gray-100/50 dark:border-gray-800 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col min-h-[500px] md:min-h-[700px] relative"
         style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
       >
+        {/* Horizontal Scroll Hint for Mobile */}
+        {view !== 'day' && (
+          <div className="md:hidden flex items-center justify-center py-2 bg-blue-50/50 dark:bg-blue-900/10 text-[10px] font-bold text-blue-600 dark:text-blue-400 border-b border-blue-100 dark:border-blue-900/20">
+            <span className="flex items-center gap-1.5 uppercase tracking-widest">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8L22 12L18 16M6 8L2 12L6 16"></path>
+              </svg>
+              Scroll Horizontal
+            </span>
+          </div>
+        )}
+
+        <div className={`flex-1 overflow-x-auto no-scrollbar ${view !== 'day' ? 'cursor-grab active:cursor-grabbing' : ''}`}>
+          <div className={`${view === 'month' || view === 'week' ? 'min-w-[800px] md:min-w-0 h-full flex flex-col' : 'h-full flex flex-col'}`}>
         {isLoading && (
             <div className="absolute inset-0 z-50 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm flex items-center justify-center">
                 <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
@@ -611,213 +680,198 @@ export default function SchedulePage() {
             {/* Drag Overlay */}
             <DragOverlay dropAnimation={dropAnimation}>
                 {activeTask ? (
-                    <TaskCard task={activeTask} isOverlay />
+                    <TaskCard 
+                        task={activeTask} 
+                        isOverlay 
+                        variant={view === 'month' ? 'minimal' : 'detailed'} 
+                    />
                 ) : null}
             </DragOverlay>
 
             {/* Add Event Modal */}
         </DndContext>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Add Task Modal Styling */}
-      {isAddOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-20">
-            <div className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm" onClick={() => setIsAddOpen(false)} />
-            <motion.div 
-                initial={{ opacity: 0, scale: 0.95, y: -20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 w-full max-w-2xl relative z-10 border border-gray-100 dark:border-gray-800"
-            >
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold font-aspekta">Add New Event</h3>
-                    <button onClick={() => setIsAddOpen(false)} className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
-                        <XMarkIcon className="w-5 h-5" />
-                    </button>
+      {/* Add Task Modal */}
+      <Modal 
+        isOpen={isAddOpen} 
+        onClose={() => setIsAddOpen(false)} 
+        title="Add New Event"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Column 1 */}
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-500 font-inter">Event Title</label>
+                    <input 
+                        autoFocus
+                        type="text" 
+                        placeholder="e.g. Team Meeting"
+                        value={newTaskTitle}
+                        onChange={(e) => setNewTaskTitle(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
+                        className="w-full h-10 px-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
+                    />
                 </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                     <div className="space-y-2">
+                          <label className="text-xs font-semibold text-gray-500 font-inter">Date</label>
+                          <div className="relative">
+                             <CalendarDaysIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                             <input 
+                                 type="date"
+                                 value={newTaskDate}
+                                 onChange={(e) => setNewTaskDate(e.target.value)}
+                                 className="w-full h-10 pl-9 pr-2 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-xs"
+                             />
+                          </div>
+                     </div>
+                     <div className="space-y-2">
+                          <label className="text-xs font-semibold text-gray-500 font-inter">Time (24h)</label>
+                          <div className="flex items-center gap-2">
+                             <input 
+                               type="text"
+                               maxLength={2}
+                               placeholder="HH"
+                               value={newTaskTime.split(':')[0]} 
+                               onChange={(e) => {
+                                   const h = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                   const m = newTaskTime.split(':')[1] || '00';
+                                   if (h === '' || (parseInt(h) >= 0 && parseInt(h) <= 23)) {
+                                       setNewTaskTime(`${h}:${m}`);
+                                   }
+                               }}
+                               onBlur={(e) => {
+                                   const h = e.target.value.padStart(2, '0');
+                                   const m = newTaskTime.split(':')[1] || '00';
+                                   setNewTaskTime(`${h}:${m}`);
+                               }}
+                               className="w-16 h-10 text-center rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
+                             />
+                             <span className="text-gray-400 font-bold">:</span>
+                             <input 
+                               type="text"
+                               maxLength={2}
+                               placeholder="MM"
+                               value={newTaskTime.split(':')[1]} 
+                               onChange={(e) => {
+                                   const m = e.target.value.replace(/\D/g, '').slice(0, 2);
+                                   const h = newTaskTime.split(':')[0] || '00';
+                                   if (m === '' || (parseInt(m) >= 0 && parseInt(m) <= 59)) {
+                                       setNewTaskTime(`${h}:${m}`);
+                                   }
+                               }}
+                               onBlur={(e) => {
+                                   const m = e.target.value.padStart(2, '0');
+                                   const h = newTaskTime.split(':')[0] || '00';
+                                   setNewTaskTime(`${h}:${m}`);
+                               }}
+                               className="w-16 h-10 text-center rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
+                             />
+                          </div>
+                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-500 font-inter">Event Type</label>
+                    <Select value={newTaskType} onValueChange={(val) => setNewTaskType(val as "online" | "offline" | "hybrid")}>
+                       <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-none h-10 rounded-lg text-sm font-medium font-inter shadow-none">
+                         <SelectValue />
+                       </SelectTrigger>
+                       <SelectContent className="z-[10001]">
+                         <SelectItem value="online">Online Meeting</SelectItem>
+                         <SelectItem value="offline">Offline / In-Person</SelectItem>
+                         <SelectItem value="hybrid">Hybrid</SelectItem>
+                       </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            {/* Column 2 */}
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-500 font-inter">Participants <span className="text-gray-400 font-normal">(Optional)</span></label>
+                    <input 
+                        type="text" 
+                        placeholder="e.g. John, Sarah"
+                        value={newTaskParticipants}
+                        onChange={(e) => setNewTaskParticipants(e.target.value)}
+                        className="w-full h-10 px-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
+                    />
+                </div>
+
+                 <div className="space-y-2">
+                     <label className="text-xs font-semibold text-gray-500 font-inter">Color Theme</label>
+                     <div className="flex gap-2">
+                         {TASK_COLORS.map(c => (
+                             <button
+                                 key={c.id}
+                                 onClick={() => setNewTaskColor(c.id)}
+                                 className={`w-8 h-8 rounded-full ${c.bg} ${c.text} border-2 transition-all flex items-center justify-center ${newTaskColor === c.id ? 'border-gray-900 dark:border-white scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
+                             >
+                                 <div className={`w-2 h-2 rounded-full bg-current`} />
+                             </button>
+                         ))}
+                     </div>
+                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Column 1 */}
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 font-inter">Event Title</label>
-                            <input 
-                                autoFocus
-                                type="text" 
-                                placeholder="e.g. Team Meeting"
-                                value={newTaskTitle}
-                                onChange={(e) => setNewTaskTitle(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
-                                className="w-full h-10 px-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-3">
-                             <div className="space-y-2">
-                                  <label className="text-xs font-semibold text-gray-500 font-inter">Date</label>
-                                  <div className="relative">
-                                     <CalendarDaysIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                     <input 
-                                         type="date"
-                                         value={newTaskDate}
-                                         onChange={(e) => setNewTaskDate(e.target.value)}
-                                         className="w-full h-10 pl-9 pr-2 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-xs"
-                                     />
-                                  </div>
-                             </div>
-                             <div className="space-y-2">
-                                  <label className="text-xs font-semibold text-gray-500 font-inter">Time (24h)</label>
-                                  <div className="flex items-center gap-2">
-                                     <input 
-                                       type="text"
-                                       maxLength={2}
-                                       placeholder="HH"
-                                       value={newTaskTime.split(':')[0]} 
-                                       onChange={(e) => {
-                                           const h = e.target.value.replace(/\D/g, '').slice(0, 2);
-                                           const m = newTaskTime.split(':')[1] || '00';
-                                           if (h === '' || (parseInt(h) >= 0 && parseInt(h) <= 23)) {
-                                               setNewTaskTime(`${h}:${m}`);
-                                           }
-                                       }}
-                                       onBlur={(e) => {
-                                           const h = e.target.value.padStart(2, '0');
-                                           const m = newTaskTime.split(':')[1] || '00';
-                                           setNewTaskTime(`${h}:${m}`);
-                                       }}
-                                       className="w-16 h-10 text-center rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
-                                     />
-                                     <span className="text-gray-400 font-bold">:</span>
-                                     <input 
-                                       type="text"
-                                       maxLength={2}
-                                       placeholder="MM"
-                                       value={newTaskTime.split(':')[1]} 
-                                       onChange={(e) => {
-                                           const m = e.target.value.replace(/\D/g, '').slice(0, 2);
-                                           const h = newTaskTime.split(':')[0] || '00';
-                                           if (m === '' || (parseInt(m) >= 0 && parseInt(m) <= 59)) {
-                                               setNewTaskTime(`${h}:${m}`);
-                                           }
-                                       }}
-                                       onBlur={(e) => {
-                                           const m = e.target.value.padStart(2, '0');
-                                           const h = newTaskTime.split(':')[0] || '00';
-                                           setNewTaskTime(`${h}:${m}`);
-                                       }}
-                                       className="w-16 h-10 text-center rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
-                                     />
-                                  </div>
-                             </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 font-inter">Event Type</label>
-                            <Select value={newTaskType} onValueChange={(val) => setNewTaskType(val as "online" | "offline" | "hybrid")}>
-                               <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-none h-10 rounded-lg text-sm font-medium font-inter">
-                                 <SelectValue />
-                               </SelectTrigger>
-                               <SelectContent className="z-[200]">
-                                 <SelectItem value="online">Online Meeting</SelectItem>
-                                 <SelectItem value="offline">Offline / In-Person</SelectItem>
-                                 <SelectItem value="hybrid">Hybrid</SelectItem>
-                               </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-
-                    {/* Column 2 */}
-                    <div className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 font-inter">Participants <span className="text-gray-400 font-normal">(Optional)</span></label>
-                            <input 
-                                type="text" 
-                                placeholder="e.g. John, Sarah"
-                                value={newTaskParticipants}
-                                onChange={(e) => setNewTaskParticipants(e.target.value)}
-                                className="w-full h-10 px-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm"
-                            />
-                        </div>
-
-                         <div className="space-y-2">
-                             <label className="text-xs font-semibold text-gray-500 font-inter">Color Theme</label>
-                             <div className="flex gap-2">
-                                 {TASK_COLORS.map(c => (
-                                     <button
-                                         key={c.id}
-                                         onClick={() => setNewTaskColor(c.id)}
-                                         className={`w-8 h-8 rounded-full ${c.bg} ${c.text} border-2 transition-all flex items-center justify-center ${newTaskColor === c.id ? 'border-gray-900 dark:border-white scale-110 shadow-sm' : 'border-transparent hover:scale-105'}`}
-                                     >
-                                         <div className={`w-2 h-2 rounded-full bg-current`} />
-                                     </button>
-                                 ))}
-                             </div>
-                         </div>
-                        
-                        <div className="space-y-2">
-                            <label className="text-xs font-semibold text-gray-500 font-inter">Agenda / Notes</label>
-                            <Textarea 
-                                placeholder="Add description..."
-                                value={newTaskNotes}
-                                onChange={(e) => setNewTaskNotes(e.target.value)}
-                                className="w-full h-24 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm resize-none"
-                            />
-                        </div>
-                    </div>
+                <div className="space-y-2">
+                    <label className="text-xs font-semibold text-gray-500 font-inter">Agenda / Notes</label>
+                    <Textarea 
+                        placeholder="Add description..."
+                        value={newTaskNotes}
+                        onChange={(e) => setNewTaskNotes(e.target.value)}
+                        className="w-full h-24 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium font-inter text-sm resize-none shadow-none"
+                    />
                 </div>
-
-                <div className="mt-6 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-800 pt-4">
-                     <button 
-                        onClick={() => setIsAddOpen(false)}
-                        className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        onClick={handleAddTask}
-                        className="px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-bold text-xs hover:shadow-lg transition-all active:scale-95 flex items-center gap-2"
-                    >
-                        Save Event
-                    </button>
-                </div>
-            </motion.div>
+            </div>
         </div>
-      )}
+
+        <div className="mt-8 flex justify-end gap-3 border-t border-gray-100 dark:border-gray-800 pt-6">
+             <button 
+                onClick={() => setIsAddOpen(false)}
+                className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+                Cancel
+            </button>
+            <button 
+                onClick={handleAddTask}
+                disabled={isSaving}
+                className="px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-lg font-bold text-xs hover:shadow-lg transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50"
+            >
+                {isSaving ? (
+                    <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Saving...
+                    </>
+                ) : "Save Event"}
+            </button>
+        </div>
+      </Modal>
 
       {/* View Task Details Modal */}
-      {selectedTask && (
-        <div className="fixed inset-0 z-[200] flex items-start justify-center p-4 pt-20">
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-                onClick={() => setSelectedTask(null)}
-            />
-            <motion.div 
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 w-full max-w-2xl relative z-10 border border-gray-100 dark:border-gray-800"
-            >
-                <div className="flex justify-between items-start mb-6 border-b border-gray-50 dark:border-gray-800 pb-4">
-                   <div>
-                       <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-2 ${
-                           selectedTask.type === 'online' ? 'bg-blue-100 text-blue-700' :
-                           selectedTask.type === 'offline' ? 'bg-purple-100 text-purple-700' :
-                           'bg-emerald-100 text-emerald-700'
-                       }`}>
-                           {selectedTask.type || 'event'}
-                       </span>
-                       <h3 className="text-2xl font-bold font-aspekta text-gray-900 dark:text-white tracking-tighter">
-                           {isEditing ? 'Edit Event' : selectedTask.title}
-                       </h3>
-                   </div>
-                    <button 
-                       onClick={() => setSelectedTask(null)}
-                       className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors shrink-0"
-                   >
-                       <XMarkIcon className="w-4 h-4" />
-                   </button>
-                </div>
+      <Modal
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        title={isEditing ? 'Edit Event' : (selectedTask?.title || '')}
+        maxWidth="max-w-2xl"
+      >
+        {selectedTask && (
+            <>
+                {!isEditing && (
+                    <div className="mb-6 -mt-2">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            selectedTask.type === 'online' ? 'bg-blue-100 text-blue-700' :
+                            selectedTask.type === 'offline' ? 'bg-purple-100 text-purple-700' :
+                            'bg-emerald-100 text-emerald-700'
+                        }`}>
+                            {selectedTask.type || 'event'}
+                        </span>
+                    </div>
+                )}
 
                 {isEditing ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -855,10 +909,10 @@ export default function SchedulePage() {
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Type</label>
                                 <Select value={editType} onValueChange={(val: "online" | "offline" | "hybrid") => setEditType(val)}>
-                                    <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-none h-11 rounded-lg text-sm font-medium">
+                                    <SelectTrigger className="w-full bg-gray-50 dark:bg-gray-800 border-none h-11 rounded-lg text-sm font-medium shadow-none">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="z-[300]">
+                                    <SelectContent className="z-[10001]">
                                         <SelectItem value="online">Online</SelectItem>
                                         <SelectItem value="offline">Offline</SelectItem>
                                         <SelectItem value="hybrid">Hybrid</SelectItem>
@@ -899,7 +953,7 @@ export default function SchedulePage() {
                                     value={editNotes}
                                     onChange={(e) => setEditNotes(e.target.value)}
                                     placeholder="Add notes..."
-                                    className="w-full h-[104px] p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium text-sm resize-none"
+                                    className="w-full h-[104px] p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border-none focus:ring-2 focus:ring-blue-500/20 font-medium text-sm resize-none shadow-none"
                                 />
                             </div>
                         </div>
@@ -930,7 +984,7 @@ export default function SchedulePage() {
                                 </div>
                                 <div className="flex-1">
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Participants</p>
-                                    <p className="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed">
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-white leading-relaxed text-wrap break-all">
                                         {selectedTask.participants}
                                     </p>
                                 </div>
@@ -952,7 +1006,7 @@ export default function SchedulePage() {
                 </div>
                 )}
 
-                <div className="mt-6 flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-4">
+                <div className="mt-8 flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-6">
                      {!isEditing ? (
                         <>
                             <button 
@@ -990,16 +1044,22 @@ export default function SchedulePage() {
                             </button>
                             <button 
                                 onClick={handleUpdateTask}
-                                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold text-xs hover:shadow-lg transition-all active:scale-95 shadow-md shadow-blue-500/20"
+                                disabled={isSaving}
+                                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-bold text-xs hover:shadow-lg transition-all active:scale-95 shadow-md shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50"
                             >
-                                Save Changes
+                                {isSaving ? (
+                                    <>
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                        Saving...
+                                    </>
+                                ) : "Save Changes"}
                             </button>
                         </>
                      )}
                 </div>
-            </motion.div>
-        </div>
-      )}
+            </>
+        )}
+      </Modal>
     </div>
   );
 }

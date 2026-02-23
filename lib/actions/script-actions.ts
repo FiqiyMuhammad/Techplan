@@ -53,3 +53,28 @@ export async function deleteScript(id: string) {
 
   return { success: true };
 }
+
+export async function updateScript(id: string, data: {
+  title?: string;
+  code?: string;
+  description?: string;
+  version?: number;
+}) {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  });
+
+  if (!session?.user) throw new Error("Unauthorized");
+
+  await db.update(scripts)
+    .set({
+      ...(data.title && { title: data.title }),
+      ...(data.code && { code: data.code }),
+      ...(data.description && { description: data.description }),
+      ...(data.version && { version: data.version }),
+      updatedAt: new Date(),
+    })
+    .where(and(eq(scripts.id, id), eq(scripts.userId, session.user.id)));
+
+  return { success: true };
+}

@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { SectionHeader } from "../common/SectionHeader";
 
 // Helper for class merging
 function cn(...classes: (string | undefined | null | false)[]) {
@@ -10,16 +12,24 @@ function cn(...classes: (string | undefined | null | false)[]) {
 
 const tabs = [
   {
-    title: "AI Curriculum Engineering",
-    description: "Build comprehensive, outcome-based curricula in minutes using advanced AI tailored for academic and professional standards.",
+    title: "Automated AI Curricula Hub",
+    description: "Build high-quality, outcome-based curricula in seconds using simple prompts tailored to global academic standards properly",
+    image: "/img/curriculum.png"
   },
   {
-    title: "Conflict-Free Smart Scheduling",
-    description: "Automate complex scheduling for teachers, rooms, and students with zero overlaps and real-time conflict detection.",
+    title: "The AI AppScript Code Designer",
+    description: "Instantly create custom Google Apps Script code for spreadsheets to automate every institutional task and workflow",
+    image: "/img/appscript.png"
   },
   {
-    title: "Progress & Attainment Tracking",
-    description: "Monitor learning progress and outcome attainment with centralized data and automated reporting for accreditation.",
+    title: "Smart Drag & Drop Coordination",
+    description: "Manage schedules with intuitive drag-and-drop tools featuring zero overlaps and smart conflict detection today !",
+    image: "/img/schedule2.png"
+  },
+  {
+    title: "Brainstorming Design",
+    description: "Build mind maps and flow diagrams with intuitive visual tools to unlock every single creative project now",
+    image: "/img/workflow2.png"
   }
 ];
 
@@ -31,31 +41,44 @@ export default function SoftwareV2() {
   useEffect(() => {
     if (isHovered) return;
     const timer = setInterval(() => {
-      setActiveTab((prev) => (prev + 1) % tabs.length);
+      setActiveTab((prev: number) => (prev + 1) % tabs.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [isHovered]);
 
   return (
-    <section className="w-full bg-white pt-24 pb-24 flex items-center flex-col px-8 overflow-hidden">
-      <div className="container mx-auto text-center mb-20">
-         {/* Host Title */}
-        <h2 className="section-title text-[3rem] leading-tight font-bold mb-6 font-aspekta tracking-tight max-w-3xl mx-auto bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-2">
-          One Integrated System <br />For Modern Education
-        </h2>
-        {/* Host Subtitle */}
-        <p className="text-gray-500 text-lg max-w-4xl mx-auto font-geist leading-relaxed">
-          From curriculum design to real-time analytics, TechPlan provides the tools you need to run a high-performing educational institution or training center.
-        </p>
+    <section id="features" className="w-full bg-white pt-4 md:pt-12 pb-16 flex items-center flex-col px-6 md:px-8 overflow-hidden">
+      <div className="container mx-auto">
+        <SectionHeader 
+          title="The Intelligent Hub Of Academic Excellence"
+          description="From automated AI curriculum design to smart scheduling, TechPlan provides the unified workspace you need to eliminate manual chaos and optimize every single flow"
+        />
       </div>
 
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 lg:gap-24 items-center">
         
         {/* LEFT: Features List (4 cols) */}
-        <div className="lg:col-span-4 flex flex-col gap-8">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ staggerChildren: 0.2, delayChildren: 0.3 }}
+          className="lg:col-span-4 flex flex-col gap-6 md:gap-8 order-2 lg:order-1"
+        >
           {tabs.map((tab, idx) => (
-            <div
+            <motion.div
               key={idx}
+              variants={{
+                hidden: { opacity: 0, x: -70 },
+                visible: { 
+                    opacity: 1, 
+                    x: 0,
+                    transition: { 
+                      duration: 1.0, 
+                      ease: [0.16, 1, 0.3, 1] 
+                    }
+                }
+              }}
               className="relative pl-8 cursor-pointer group"
               onClick={() => { setActiveTab(idx); setIsHovered(true); }}
               onMouseEnter={() => setIsHovered(true)}
@@ -77,16 +100,16 @@ export default function SoftwareV2() {
                 <h3 className="text-xl font-bold font-aspekta text-gray-900 mb-2 leading-tight">
                   {tab.title}
                 </h3>
-                <p className="font-geist text-sm text-gray-500 leading-relaxed">
+                <p className="font-geist text-xs sm:text-sm text-gray-500 leading-relaxed">
                   {tab.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* RIGHT: Browser Mockup (8 cols) */}
-        <div className="lg:col-span-8 relative">
+        <div className="lg:col-span-8 relative order-1 lg:order-2">
           <div className="w-full bg-white rounded-2xl border border-gray-100 shadow-[0_40px_100px_rgba(0,0,0,0.06)] overflow-hidden">
             {/* Browser Dots */}
             <div className="h-10 bg-gray-50/50 border-b border-gray-50 flex items-center px-5 gap-2">
@@ -108,72 +131,34 @@ export default function SoftwareV2() {
                    {/* Placeholder Gradient */}
                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100" />
                    
-                   {/* Placeholder Content */}
-                   <div className="relative z-10 text-center p-8">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#368AE3] to-[#3B9AF7] mx-auto mb-4 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                          <span className="text-white font-bold text-xl">{activeTab + 1}</span>
-                      </div>
-                      <h4 className="text-gray-900 font-bold font-aspekta mb-2">{tabs[activeTab].title}</h4>
-                      <p className="text-gray-400 text-sm font-geist">Image Placeholder</p>
+                   {/* Image Content */}
+                   <div className="absolute inset-0">
+                      <Image 
+                        src={tabs[activeTab].image} 
+                        alt={tabs[activeTab].title}
+                        fill
+                        className="object-contain"
+                        priority
+                      />
+                      
+                      {/* Top/Bottom Gradients to blend with white background */}
+                      <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
                    </div>
                   
                   {/* Glassy Overlay */}
-                  <div className="absolute inset-0 bg-[#368AE3]/5 pointer-events-none" />
+                   <div className="absolute inset-0 bg-[#368AE3]/5 pointer-events-none" />
 
-                  {/* Interactive Button */}
-                  <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-                    <div className="bg-[#368AE3] hover:bg-[#3B9AF7] transition-colors px-6 py-2.5 rounded-full text-white font-bold shadow-lg shadow-blue-500/30 text-sm whitespace-nowrap cursor-pointer">
-                       Get Started Today
-                    </div>
-                  </div>
                 </motion.div>
               </AnimatePresence>
 
-               {/* Simulated Cursor - Host Color */}
-              <motion.div
-                animate={{
-                  x: [300, 100, 200, 150, 180], 
-                  y: [200, 120, 180, 220, 200],
-                  scale: [1, 1, 0.9, 1 , 1]
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-                className="absolute top-0 left-0 z-50 pointer-events-none drop-shadow-xl"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M5.65376 12.3787L17.2287 4.54226C18.667 3.56707 20.4329 5.33291 19.4577 6.77124L11.6213 18.3462C10.5186 19.9723 8.01759 19.6052 7.42907 17.7219L5.41913 11.29L5.65376 12.3787Z" fill="#368AE3" stroke="white" strokeWidth="2" />
-                </svg>
-              </motion.div>
             </div>
           </div>
         </div>
       </div>
       
-      <button className="flex items-center justify-center gap-[10px] px-8 h-[54px] rounded-full bg-gray-900 text-white font-bold hover:bg-black transition-all shadow-xl hover:shadow-black/10 mt-16 group font-geist">
-        How it works
-        <motion.span
-           animate={{ x: [0, 5, 0] }}
-           transition={{ duration: 1.5, repeat: Infinity }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M5 12h14" />
-            <path d="m12 5 7 7-7 7" />
-          </svg>
-        </motion.span>
-      </button>
+
     </section>
   );
 }
+

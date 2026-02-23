@@ -9,32 +9,29 @@ import {
   DocumentTextIcon,
   ArrowPathIcon,
   ChevronLeftIcon,
-  TrashIcon
+  TrashIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/solid";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-import { saveDocument, getDocuments, deleteDocument } from "@/lib/actions/document-actions";
+import { saveDocument, getDocuments, deleteDocument, updateDocument } from "@/lib/actions/document-actions";
 
 import { generateCurriculum } from "@/lib/actions/ai-actions";
 import { Message } from "@/lib/ai/client";
 import { toast } from "sonner";
-import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
+const ReactMarkdown = dynamic(() => import("react-markdown"), { ssr: false });
 import remarkGfm from "remark-gfm";
 import Image from "next/image";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useRef } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { CURRICULUM_TEMPLATES } from "@/lib/data/templates";
 import TemplateGallery from "@/components/elements/TemplateGallery";
+import ShinyText from "@/components/common/ShinyText";
 
 interface CurriculumDoc {
   id: string;
@@ -51,23 +48,47 @@ export default function CurriculumPage() {
   const [prompt, setPrompt] = useState("");
   const [refinementPrompt, setRefinementPrompt] = useState("");
   const [recentDocs, setRecentDocs] = useState<CurriculumDoc[]>([]);
+  const [activeDocId, setActiveDocId] = useState<string | null>(null);
   const [currentCurriculum, setCurrentCurriculum] = useState("");
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const [contextMode, setContextMode] = useState<ContextMode>("academic");
   const [selectedProvider, setSelectedProvider] = useState<"google" | "groq" | "openrouter">("google");
+  const [isModelOpen, setIsModelOpen] = useState(false);
+  const modelRef = useRef<HTMLDivElement>(null);
   const docRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     async function loadDocs() {
         try {
             const docs = await getDocuments("curriculum");
             setRecentDocs(docs);
+            
+            // Auto-load if ID is in URL
+            const id = searchParams.get("id");
+            if (id) {
+                const doc = docs.find(d => d.id === id);
+                if (doc) {
+                    setCurrentCurriculum(doc.content);
+                    setActiveDocId(doc.id);
+                    setHasResult(true);
+                }
+            }
         } catch (error) {
             console.error("Failed to load documents:", error);
         }
     }
     loadDocs();
-  }, []);
+
+    // Click outside for model selector
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modelRef.current && !modelRef.current.contains(event.target as Node)) {
+        setIsModelOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [searchParams]);
 
   const handleGenerate = async (e?: React.FormEvent, isRefinement = false) => {
     if (e) e.preventDefault();
@@ -83,7 +104,7 @@ export default function CurriculumPage() {
             chatHistory, 
             selectedProvider,
             selectedProvider === "google" ? "google/gemini-2.0-flash-001" : 
-            selectedProvider === "groq" ? "llama-3.3-70b-versatile" : "openai/gpt-4o-mini"
+            selectedProvider === "groq" ? "llama-3.3-70b-versatile" : "openai/gpt-4o"
         );
         
         if (result.success && result.content) {
@@ -97,20 +118,23 @@ export default function CurriculumPage() {
             setChatHistory(newHistory);
             
             if (!isRefinement) {
-              await saveDocument({
-                  title: activePrompt,
+              const saved = await saveDocument({
+                  title: prompt.length > 50 ? prompt.substring(0, 50) + "..." : prompt,
                   content: result.content,
                   type: "curriculum",
                   format: "pdf"
               });
               
+              if (saved) setActiveDocId(saved.id);
               const docs = await getDocuments("curriculum");
               setRecentDocs(docs);
               setHasResult(true);
             } else {
-
-
-
+              if (activeDocId) {
+                await updateDocument(activeDocId, {
+                  content: result.content
+                });
+              }
               setRefinementPrompt("");
               toast.success("Curriculum updated!");
             }
@@ -144,6 +168,7 @@ export default function CurriculumPage() {
       setHasResult(false);
       setPrompt("");
       setChatHistory([]);
+      setActiveDocId(null);
       setCurrentCurriculum("");
   };
 
@@ -265,7 +290,13 @@ export default function CurriculumPage() {
             className="mb-8 text-center"
         >
             <h1 className="text-4xl md:text-5xl font-bold font-aspekta tracking-tighter leading-tight pb-2">
-                <span className="text-black dark:text-white">Architect your Perfect Curriculum</span>
+                <ShinyText 
+                    text="Architect your Perfect Curriculum" 
+                    speed={3} 
+                    color="currentColor"
+                    shineColor="var(--shimmer-color)"
+                    className="text-black dark:text-white"
+                />
             </h1>
             <p className="mt-2 text-gray-500 dark:text-gray-400 font-geist text-sm">
                 Describe your learning goals, and we&apos;ll build the roadmap for teachers or trainers.
@@ -275,19 +306,19 @@ export default function CurriculumPage() {
         <AnimatePresence mode="wait">
             {!hasResult ? (
                 <>
-                <div className="flex justify-center mb-10">
-                  <div className="flex bg-gray-50/80 dark:bg-gray-800/50 p-1 rounded-full items-center border border-gray-100/50 dark:border-gray-700/50 h-12 shadow-sm relative">
+                <div className="flex justify-center mb-10 px-4">
+                  <div className="flex bg-gray-50/80 dark:bg-gray-800/50 p-1 rounded-full items-center border border-gray-100/50 dark:border-gray-700/50 h-10 md:h-12 shadow-sm relative w-full md:w-auto overflow-hidden">
                     {(['academic', 'professional'] as const).map((mode) => (
                        <button
                          key={mode}
                          onClick={() => setContextMode(mode)}
-                         className={`relative px-8 py-2 text-base font-semibold rounded-full transition-all z-10 whitespace-nowrap`}
+                         className="flex-1 md:flex-none relative px-3 md:px-8 py-1.5 md:py-2 text-[13px] md:text-base font-bold rounded-full transition-all z-10 whitespace-nowrap"
                          style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
                        >
                          {contextMode === mode && (
                             <motion.div 
                                 layoutId="activeContext"
-                                className="absolute inset-0 bg-white dark:bg-gray-700 rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-100 dark:border-gray-600"
+                                className="absolute inset-0 bg-white dark:bg-gray-700 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.08)] md:shadow-[0_4px_12px_rgba(0,0,0,0.08)] border border-gray-100 dark:border-gray-600"
                                 transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                             />
                          )}
@@ -305,19 +336,20 @@ export default function CurriculumPage() {
 
                 <motion.div 
                     key="input-mode"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="w-full max-w-4xl mx-auto relative shadow-[var(--shadow-premium-hover)] bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden focus-within:ring-4 focus-within:ring-blue-500/5 focus-within:border-blue-400/30 transition-all duration-500"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="w-full max-w-4xl mx-auto p-1.5 rounded-[1.5rem] bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-gray-800 shadow-sm relative z-30"
                     style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}
                 >
-                    <div className="h-10 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30 flex items-center px-4 justify-between">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 font-inter uppercase tracking-widest">
+                  <div className="bg-white dark:bg-gray-800 rounded-[1.3rem] border border-gray-100 dark:border-gray-700 shadow-xl transition-all duration-500 relative">
+                    <div className="h-10 border-b border-gray-50 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30 flex items-center px-6 justify-between rounded-t-[1.3rem]">
+                        <span className="text-xs font-bold text-[#33577A] font-inter uppercase tracking-widest">
                           {contextMode === "academic" ? "Academic Mode" : "Professional Mode"}
                         </span>
                         <div className="flex gap-1.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-200 dark:bg-blue-900"></div>
                         </div>
                     </div>
 
@@ -332,36 +364,60 @@ export default function CurriculumPage() {
                                 }
                             }}
                             placeholder={contextMode === "academic" ? "I want to build a curriculum for Bahasa Indonesia Grade 7..." : "I want to build a training plan for Excavator Operation Safety..."} 
-                            className="w-full h-40 p-6 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none"
+                            className="w-full h-44 p-6 md:p-8 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-base md:text-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none custom-scrollbar overflow-y-auto"
                         />
                         
-                        <div className="px-5 pb-5 flex items-center justify-between">
+                        <div className="px-6 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0">
                             <div className="flex items-center gap-2">
                             </div>
 
-                            <div className="flex items-center gap-4">
-                                <div className="flex flex-col items-end gap-1">
-                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mr-2">Using AI Engine</span>
-                                    <Select 
-                                        value={selectedProvider} 
-                                        onValueChange={(val: any) => setSelectedProvider(val)}
-                                        disabled={isGenerating}
-                                    >
-                                        <SelectTrigger className="w-[180px] h-10 rounded-xl bg-gray-50/50 dark:bg-gray-900/30 border-gray-100 dark:border-gray-700 text-xs font-semibold">
-                                            <SelectValue placeholder="Select Model" />
-                                        </SelectTrigger>
-                                        <SelectContent className="rounded-xl border-gray-100 dark:border-gray-700 shadow-xl">
-                                            <SelectItem value="google" className="text-xs font-medium">Gemini 2.0 (10 Cr)</SelectItem>
-                                            <SelectItem value="groq" className="text-xs font-medium text-green-600 dark:text-green-400">Llama 3.3 Fast (5 Cr)</SelectItem>
-                                            <SelectItem value="openrouter" className="text-xs font-medium text-orange-600">GPT-4o Premium (15 Cr)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                            <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                                 <div className="flex flex-col items-end relative flex-1 md:flex-none" ref={modelRef}>
+                                      <button 
+                                          onClick={() => setIsModelOpen(!isModelOpen)}
+                                          disabled={isGenerating}
+                                          className="w-full md:w-[185px] h-10 rounded-md bg-gray-50/50 dark:bg-gray-900/40 border border-gray-100/80 dark:border-gray-800/80 text-[13px] font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 px-4 flex items-center justify-between group"
+                                      >
+                                          <span className="truncate">
+                                            {selectedProvider === "google" ? "Gemini 2.0" : selectedProvider === "groq" ? "Llama 3.3 Fast" : "GPT-4o Premium"}
+                                          </span>
+                                          <ChevronDownIcon className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${isModelOpen ? 'rotate-180' : ''}`} />
+                                      </button>
+
+                                      <AnimatePresence>
+                                          {isModelOpen && (
+                                              <motion.div 
+                                                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                  className="absolute bottom-full mb-2 right-0 w-[240px] rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-2xl p-2 z-[100]"
+                                              >
+                                                  {[
+                                                      { id: 'google', name: 'Gemini 2.0', desc: 'Detailed • 10 Credits', color: 'text-gray-900 dark:text-gray-100', hover: 'hover:bg-blue-50/50 dark:hover:bg-blue-500/10' },
+                                                      { id: 'groq', name: 'Llama 3.3 Fast', desc: 'Efficient • 5 Credits', color: 'text-green-600 dark:text-green-400', hover: 'hover:bg-green-50/50 dark:hover:bg-green-500/10' },
+                                                      { id: 'openrouter', name: 'GPT-4o Premium', desc: 'Elite Consultant • 15 Credits', color: 'text-orange-600', hover: 'hover:bg-orange-50/50 dark:hover:bg-orange-500/10' }
+                                                  ].map((item) => (
+                                                      <div 
+                                                          key={item.id}
+                                                          onClick={() => {
+                                                              setSelectedProvider(item.id as "google" | "groq" | "openrouter");
+                                                              setIsModelOpen(false);
+                                                          }}
+                                                          className={`rounded-xl py-3 px-3 transition-all duration-300 cursor-pointer flex flex-col ${item.hover} ${selectedProvider === item.id ? 'bg-gray-50 dark:bg-gray-900' : ''}`}
+                                                      >
+                                                          <span className={`text-[13px] font-medium ${item.color}`}>{item.name}</span>
+                                                          <span className="text-[10px] text-gray-400 font-normal">{item.desc}</span>
+                                                      </div>
+                                                  ))}
+                                              </motion.div>
+                                          )}
+                                      </AnimatePresence>
+                                 </div>
 
                                 <Button 
                                     onClick={() => handleGenerate()}
                                     disabled={isGenerating || !prompt.trim()}
-                                    className={`h-12 w-auto px-8 bg-black hover:bg-black/90 text-white border-none shadow-lg shadow-black/5 rounded-2xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 group ${isGenerating ? 'opacity-80' : ''}`}
+                                    className={`h-10 flex-1 md:flex-none px-6 bg-black hover:bg-black/90 text-white border-none shadow-lg shadow-black/5 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2 group ${isGenerating ? 'opacity-80' : ''}`}
                                 >
                                     {isGenerating ? (
                                         <>
@@ -372,13 +428,10 @@ export default function CurriculumPage() {
                                         <span className="text-sm font-bold tracking-tight">Generate</span>
                                     )}
                                 </Button>
-
-
-
-
                             </div>
                         </div>
                     </div>
+                  </div>
                 </motion.div>
 
                 <div className="mt-8 max-w-4xl mx-auto">
@@ -404,11 +457,12 @@ export default function CurriculumPage() {
                                     key={doc.id}
                                     onClick={() => {
                                         setCurrentCurriculum(doc.content);
+                                        setActiveDocId(doc.id);
                                         setHasResult(true);
                                     }}
-                                    className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-white/5 transition-all cursor-pointer group hover:bg-gray-100 dark:hover:bg-gray-800/60"
+                                    className="p-1.5 bg-gray-50 dark:bg-gray-800/40 rounded-[1.5rem] border border-gray-100 dark:border-white/5 transition-all cursor-pointer group hover:bg-gray-100 dark:hover:bg-gray-800/60"
                                 >
-                                    <div className="p-3.5 bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-white/5 shadow-sm group-hover:shadow-md transition-all flex items-center gap-4">
+                                    <div className="p-3.5 bg-white dark:bg-gray-900 rounded-[1.3rem] border border-gray-100 dark:border-white/5 shadow-sm group-hover:shadow-md transition-all flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center overflow-hidden flex-shrink-0">
                                             <Image 
                                                 src="/img/document.svg" 
@@ -468,7 +522,7 @@ export default function CurriculumPage() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <div className="lg:col-span-1 space-y-6">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm space-y-4" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                        <div className="bg-white dark:bg-gray-800 rounded-[1.3rem] p-6 border border-gray-100 dark:border-gray-700 shadow-sm space-y-4" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
                              <div className="flex justify-between items-center mb-2">
                                 <h3 className="font-bold text-gray-900 dark:text-white font-aspekta tracking-tight">Export Path</h3>
                                 <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
@@ -479,14 +533,14 @@ export default function CurriculumPage() {
                              <div className="space-y-2">
                                 <Button 
                                     onClick={exportToWord}
-                                    className="w-full justify-start gap-3 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl h-11" variant="outline"
+                                    className="w-full justify-start gap-3 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl h-10" variant="outline"
                                 >
                                     <DocumentTextIcon className="w-4 h-4 text-blue-600" />
                                     <span className="text-xs font-bold uppercase tracking-tight">Word (.docx)</span>
                                 </Button>
                                 <Button 
                                     onClick={exportToPDF}
-                                    className="w-full justify-start gap-3 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-2xl h-11" variant="outline"
+                                    className="w-full justify-start gap-3 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl h-10" variant="outline"
                                 >
                                     <DocumentTextIcon className="w-4 h-4 text-red-600" />
                                     <span className="text-xs font-bold uppercase tracking-tight">PDF Document</span>
@@ -495,18 +549,26 @@ export default function CurriculumPage() {
                              </div>
                         </div>
 
-                          <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 shadow-xl shadow-blue-500/20 border border-white/10" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
-                            <div className="flex items-center gap-2 mb-2">
-                                <SparklesIcon className="w-5 h-5 text-blue-200" />
-                                <h3 className="font-bold text-white text-sm">Refinement AI</h3>
+                          <div className="bg-gradient-to-br from-[#233B53] to-[#3B658E] rounded-2xl p-5 shadow-xl shadow-blue-500/10 border border-white/10" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="p-2 bg-white/10 rounded-xl backdrop-blur-md border border-white/20 shadow-lg">
+                                    <SparklesIcon className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white text-xl font-aspekta tracking-tight whitespace-nowrap">Refinement AI</h3>
+                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-blue-300 animate-pulse"></div>
+                                        <span className="text-[10px] text-blue-100 font-bold uppercase tracking-widest opacity-80">AI Active</span>
+                                    </div>
+                                </div>
                             </div>
-                            <p className="text-[11px] text-blue-100 mb-4 font-medium opacity-80 leading-relaxed">
+                            <p className="text-[11px] text-blue-50 mb-4 font-medium opacity-90 leading-relaxed">
                                 Anda bisa mengedit hasil kurikulum di samping dengan memberikan instruksi tambahan di bawah ini.
                             </p>
                             
                             <form onSubmit={(e) => handleGenerate(e, true)} className="space-y-4">
                                 <Textarea 
-                                    className="bg-white/10 border-white/20 text-white text-xs h-32 placeholder:text-blue-200/50 focus-visible:ring-blue-300 rounded-xl resize-none backdrop-blur-md shadow-inner"
+                                    className="bg-white/10 border-white/20 text-white text-xs h-32 placeholder:text-blue-200/50 focus-visible:ring-blue-300 rounded-xl resize-none backdrop-blur-md shadow-inner custom-scrollbar overflow-y-auto"
                                     placeholder="Contoh: 'Buatkan dalam Tabel untuk pembagian JP', 'Tambah materi tentang Etika digital', atau 'Ubah nada jadi lebih santai'..."
                                     value={refinementPrompt}
                                     onChange={(e) => setRefinementPrompt(e.target.value)}
@@ -532,10 +594,10 @@ export default function CurriculumPage() {
                     </div>
 
                     <div className="lg:col-span-3">
-                         <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-xl shadow-2xl min-h-[850px] p-12 md:p-20 relative overflow-hidden border border-gray-100 dark:border-gray-800" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                         <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-[1.3rem] shadow-2xl min-h-[850px] p-12 md:p-20 relative overflow-hidden border border-gray-100 dark:border-gray-800" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
                              <div 
                                ref={docRef}
-                               className="max-w-3xl mx-auto space-y-8 font-serif leading-relaxed markdown-content prose dark:prose-invert"
+                               className="max-w-3xl mx-auto font-serif leading-relaxed markdown-content prose dark:prose-invert prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-blue-500"
                              >
                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                      {currentCurriculum}

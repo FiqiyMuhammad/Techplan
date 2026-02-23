@@ -94,8 +94,8 @@ class Particle {
     this.wire = wire;
     this.speed = speed;
     this.progress = Math.random();
-    this.tailLength = 150;
-    this.size = 2;
+    this.tailLength = 170;
+    this.size = 2.0;
   }
 
   reset() {
@@ -127,7 +127,7 @@ class Particle {
     gradient.addColorStop(1, "rgba(59, 130, 246, 0.9)");
 
     ctx.strokeStyle = gradient;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.lineCap = "round";
 
     ctx.beginPath();
@@ -163,12 +163,17 @@ export default function CircuitCanvas() {
       if (!container) return;
       canvas.width = container.offsetWidth;
       canvas.height = container.offsetHeight;
-      init();
+      
+      // Small delay to ensure DOM elements (obj-1, etc) are laid out
+      setTimeout(init, 100);
     };
 
     const getObjPos = (id: string) => {
       const el = document.getElementById(id);
-      if (!el) return { x: 0, y: 0 };
+      if (!el) {
+        // Return center of canvas as fallback instead of (0,0)
+        return { x: canvas.width / 2, y: canvas.height / 2 };
+      }
       const rect = el.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
       return {
@@ -184,7 +189,9 @@ export default function CircuitCanvas() {
       const p2 = getObjPos("obj-2");
       const p3 = getObjPos("obj-3");
 
-      const offsets = [-30, 0, 30];
+      const isDesktop = canvas.width > 768;
+      const offsets = isDesktop ? [-32, 0, 32] : [-15, 0, 15];
+      const wireWidth = isDesktop ? 1.8 : 1.2;
       const stableSpeed = 0.003;
       const margin = 800;
       
@@ -202,6 +209,8 @@ export default function CircuitCanvas() {
         ];
 
         const wire = new Wire(points);
+        // Store wireWidth in the wire object for use in drawing
+        (wire as any).lineWidth = wireWidth;
         wires.current.push(wire);
 
         // Add multiple particles per main wire for a continuous stream
@@ -265,7 +274,7 @@ export default function CircuitCanvas() {
 
       wires.current.forEach((w, i) => {
         ctx.globalAlpha = i < 3 ? 0.8 : 0.5;
-        ctx.lineWidth = i < 3 ? 1.5 : 1;
+        ctx.lineWidth = (w as any).lineWidth || (i < 3 ? 1.5 : 0.8);
         w.draw(ctx);
       });
 

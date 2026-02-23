@@ -7,7 +7,7 @@ const CONFIG = {
   particleColor: "#3b82f6",
   glowColor: "rgba(59, 130, 246, 0.5)",
   gridSize: 40,
-  maxWires: 15,
+  maxWires: 12,
 };
 
 class HeroWire {

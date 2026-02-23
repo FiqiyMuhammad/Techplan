@@ -354,17 +354,51 @@ export default function PacmanPage() {
     }, [highScore]);
 
     return (
-        <div className="min-h-screen max-h-screen bg-[#F5F5F7] flex flex-col items-center justify-center font-inter relative outline-none overflow-hidden select-none py-8 md:py-0">
+        <div className="min-h-screen bg-[#F5F5F7] flex flex-col items-center font-inter relative outline-none select-none py-6 md:py-12">
             <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-200/30 rounded-full blur-[100px] pointer-events-none" />
             <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 rounded-full blur-[100px] pointer-events-none" />
 
-            <div className="z-10 w-full max-w-5xl mb-4 relative">
-                <div className="flex flex-wrap items-center gap-3 mb-6 px-4 bg-gradient-to-b from-black/5 to-transparent/0 py-3 rounded-full border border-white/50 backdrop-blur-md shadow-sm w-max mx-auto md:hidden">
-                    <Link href="/dashboard" className="px-4 py-1.5 rounded-full bg-white/40 border border-white/40 text-sm font-bold text-gray-600 hover:bg-white/60 transition-colors">← Kembali</Link>
-                    <div className="px-4 py-1.5 rounded-full bg-black/80 text-white text-sm font-bold shadow-sm">Skor: {score}</div>
+            <div className="z-10 w-full max-w-5xl relative flex flex-col items-center">
+                {/* Mobile Comprehensive Header */}
+                <div className="md:hidden w-full px-5 mb-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <Link href="/dashboard" className="p-2.5 rounded-xl bg-white/80 border border-white/50 shadow-sm text-gray-600 backdrop-blur-md active:scale-95 transition-all">
+                            <ChevronLeftIcon className="w-5 h-5" />
+                        </Link>
+                        
+                        <div className="flex gap-2">
+                             <div className="px-5 py-2 rounded-xl bg-black shadow-xl flex flex-col items-center justify-center">
+                                <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold leading-tight">Score</span>
+                                <span className="text-xl font-black text-white leading-none tabular-nums">{score}</span>
+                             </div>
+                             <button onClick={togglePause} className="p-2.5 rounded-xl bg-orange-500 text-white shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
+                                {gameState === 'PAUSED' ? <PlayIcon className="w-6 h-6" /> : <PauseIcon className="w-6 h-6" />}
+                             </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 bg-white/60 backdrop-blur-xl border border-white/80 p-3 rounded-2xl shadow-sm">
+                        <div className="flex flex-col items-center border-r border-gray-200/50">
+                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Level</span>
+                            <span className="text-base font-black text-gray-900 leading-none">{level}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-1.5">Lives</span>
+                            <div className="flex gap-1.5">
+                                {Array.from({ length: 3 }).map((_, i) => (
+                                    <div key={i} className={`w-3 h-3 rounded-full ${i < lives ? 'bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.6)]' : 'bg-gray-200'}`} />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-center border-l border-gray-200/50">
+                            <span className="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-0.5">Best</span>
+                            <span className="text-base font-black text-gray-900 leading-none tabular-nums">{highScore}</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 w-full">
+                    {/* Desktop Sidebar */}
                     <div className="hidden md:flex flex-col gap-3 w-44">
                         <Link href="/dashboard" className="px-5 py-3 rounded-lg bg-white border border-black/5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-all shadow-sm flex items-center gap-2">
                              <ChevronLeftIcon className="w-4 h-4" /> Kembali
@@ -395,7 +429,7 @@ export default function PacmanPage() {
                         </button>
                     </div>
 
-                    <div className="relative bg-white/50 backdrop-blur-3xl rounded-2xl shadow-xl border border-white/90 p-5 md:p-7 touch-none w-fit">
+                    <div className="relative bg-white/50 backdrop-blur-3xl rounded-2xl shadow-xl border border-white/90 p-4 md:p-7 touch-none w-fit mx-auto">
                         <canvas ref={canvasRef} width={COLS * TILE} height={ROWS * TILE} className="bg-white/20 rounded-2xl shadow-inner border border-white/30 relative z-0 max-w-full h-auto" />
                         <AnimatePresence>
                             {(gameState === 'START' || gameState === 'GAMEOVER' || gameState === 'WIN' || gameState === 'PAUSED') && (
@@ -446,15 +480,15 @@ export default function PacmanPage() {
                         </AnimatePresence>
                     </div>
 
-                    <div className="flex flex-col items-center gap-6">
+                    <div className="flex flex-col items-center gap-6 mb-12">
                         <div className="grid grid-cols-3 gap-3 w-max">
-                            <div/><button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='up'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all"><ChevronUpIcon className="w-8 h-8"/></button><div/>
-                            <button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='left'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all"><ChevronLeftIcon className="w-8 h-8"/></button>
+                            <div/><button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='up'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all active:scale-95 active:shadow-inner"><ChevronUpIcon className="w-8 h-8"/></button><div/>
+                            <button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='left'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all active:scale-95 active:shadow-inner"><ChevronLeftIcon className="w-8 h-8"/></button>
                             <div className="w-16 h-16 flex items-center justify-center"><div className="w-2.5 h-2.5 rounded-full bg-gray-200/40"/></div>
-                            <button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='right'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all"><ChevronRightIcon className="w-8 h-8"/></button>
-                            <div/><button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='down'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all"><ChevronDownIcon className="w-8 h-8"/></button><div/>
+                            <button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='right'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all active:scale-95 active:shadow-inner"><ChevronRightIcon className="w-8 h-8"/></button>
+                            <div/><button onPointerDown={(e)=>{e.preventDefault(); if(!gameRef.current.running) startGame(); gameRef.current.player.nextDir='down'}} className="w-16 h-16 bg-white border border-black/5 shadow-lg rounded-xl flex items-center justify-center text-gray-700 hover:bg-gray-50 transition-all active:scale-95 active:shadow-inner"><ChevronDownIcon className="w-8 h-8"/></button><div/>
                         </div>
-                        <div className="hidden md:block px-6 py-2 bg-black/5 rounded-full text-[11px] font-semibold text-gray-400 tracking-wide text-center">Gunakan WASD atau panah pada keyboard.</div>
+                        <div className="hidden md:block px-6 py-2 bg-black/5 rounded-full text-[11px] font-semibold text-gray-400 tracking-wide text-center uppercase tracking-widest">Gunakan WASD atau panah pada keyboard.</div>
                     </div>
                 </div>
             </div>
