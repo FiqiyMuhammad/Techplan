@@ -150,79 +150,81 @@ const IntegrationsDemo = () => {
       className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#020617]"
       ref={containerRef}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,150,246,0.1),transparent_80%)]" />
+      {/* Premium Background Effects */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,150,246,0.15),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150" />
       
-      <div className="flex h-full w-full flex-col items-stretch justify-between gap-2 z-10 p-6 md:p-12">
-        <div className="flex flex-row items-center justify-between">
-          <Circle ref={div1Ref} className="h-10 w-10 md:h-14 md:w-14">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-6 md:gap-10 z-10 p-4">
+        {/* Top Row: Closer together on mobile */}
+        <div className="flex flex-row items-center gap-16 md:gap-32">
+          <Circle ref={div1Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <Database className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-          <Circle ref={div5Ref} className="h-10 w-10 md:h-14 md:w-14">
+          <Circle ref={div5Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <Cpu className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <Circle ref={div2Ref} className="h-10 w-10 md:h-14 md:w-14">
+
+        {/* Middle Row: The Core Hub */}
+        <div className="flex flex-row items-center gap-10 md:gap-16">
+          <Circle ref={div2Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <Cloud className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-            <div className="relative h-20 w-20 md:h-32 md:w-32 flex items-center justify-center">
-              {/* Pulsing Outer Glow */}
-              <div className="absolute inset-0 rounded-full bg-blue-500/10 animate-ping duration-[4s]" />
-              
-              {/* Rotating Background & Rings */}
-              <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full bg-gradient-to-br from-[#3A96F6] via-[#3B82F6] to-[#1D4ED8] shadow-[0_0_60px_-10px_rgba(58,150,246,0.6),inset_0_0_30px_rgba(255,255,255,0.2)] flex items-center justify-center p-1 md:p-2"
-              >
-                <div className="h-full w-full rounded-full border-[4px] md:border-[8px] border-white/90 border-t-white/30 border-l-white/50" />
-              </motion.div>
 
-              {/* Static Central Icon */}
-              <motion.div 
+          <div className="relative h-24 w-24 md:h-32 md:w-32 flex items-center justify-center">
+             {/* Multi-layered Core Glow */}
+             <div className="absolute inset-[-15px] rounded-full bg-blue-500/15 blur-2xl animate-pulse" />
+             
+             {/* Decorative Rings */}
+             <motion.div 
+               animate={{ rotate: 360 }}
+               transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+               className="absolute inset-[-5px] rounded-full border border-dashed border-blue-400/30"
+             />
+             <motion.div 
+               animate={{ rotate: -360 }}
+               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+               className="absolute inset-[2px] rounded-full border border-dotted border-blue-500/20"
+             />
+
+             {/* The Hub Node */}
+             <motion.div 
                 ref={div6Ref}
-                animate={{ 
-                  y: [0, -4, 0],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="z-20 h-12 w-12 md:h-20 md:w-20 rounded-full bg-blue-600/20 backdrop-blur-md flex items-center justify-center shadow-inner"
-              >
+                className="z-20 h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-br from-[#3A96F6] to-[#1D4ED8] flex items-center justify-center shadow-[0_0_40px_rgba(58,150,246,0.6)] border-2 border-white/30"
+             >
+                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
                 <Image 
                   src="/logoku/logo2/logo-aja2.svg" 
                   alt="TechPlan Logo" 
                   width={64} 
                   height={64}
-                  className="w-8 h-8 md:w-16 md:h-16 brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+                  className="w-10 h-10 md:w-16 md:h-16 brightness-0 invert drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
                 />
-              </motion.div>
+             </motion.div>
+          </div>
 
-              {/* Glossy Reflection (Static) */}
-              <div className="absolute top-2 md:top-4 left-3 md:left-6 w-1/2 h-1/4 bg-gradient-to-b from-white/20 to-transparent rounded-full blur-[2px] md:blur-[4px] pointer-events-none z-30" />
-            </div>
-          <Circle ref={div7Ref} className="h-10 w-10 md:h-14 md:w-14">
+          <Circle ref={div7Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <FileText className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
-        <div className="flex flex-row items-center justify-between">
-          <Circle ref={div3Ref} className="h-10 w-10 md:h-14 md:w-14">
+
+        {/* Bottom Row: Closer together on mobile */}
+        <div className="flex flex-row items-center gap-16 md:gap-32">
+          <Circle ref={div3Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <Globe className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-          <Circle ref={div4Ref} className="h-10 w-10 md:h-14 md:w-14">
+          <Circle ref={div4Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
             <SquareDashedBottomCode className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
       </div>
 
-      <AnimatedBeam containerRef={containerRef} fromRef={div1Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-20} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div2Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={10} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div3Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={20} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div4Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-10} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div5Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-20} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div7Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={20} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div1Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-15} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div2Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={5} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div3Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={15} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div4Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-5} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div5Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-15} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div7Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={15} duration={3} />
     </div>
   );
 };
