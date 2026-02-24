@@ -364,7 +364,7 @@ export default function CurriculumPage() {
                                 }
                             }}
                             placeholder={contextMode === "academic" ? "I want to build a curriculum for Bahasa Indonesia Grade 7..." : "I want to build a training plan for Excavator Operation Safety..."} 
-                            className="w-full h-44 p-6 md:p-8 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-base md:text-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none custom-scrollbar overflow-y-auto"
+                            className="w-full h-44 p-6 md:p-8 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-sm md:text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none custom-scrollbar overflow-y-auto"
                         />
                         
                         <div className="px-6 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0">

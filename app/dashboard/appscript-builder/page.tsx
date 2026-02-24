@@ -478,7 +478,7 @@ export default function AppScriptBuilderPage() {
                                     }
                                 }}
                                 placeholder="I want a script that automatically organizes my Google Drive files..." 
-                                className="w-full h-44 p-6 md:p-8 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-base md:text-lg text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none custom-scrollbar overflow-y-auto"
+                                className="w-full h-44 p-6 md:p-8 bg-transparent border-none outline-none focus-visible:ring-0 resize-none text-sm md:text-base text-gray-900 dark:text-gray-100 placeholder:text-gray-300 dark:placeholder:text-gray-600 font-geist leading-relaxed shadow-none custom-scrollbar overflow-y-auto"
                             />
                             
                             {imageBase64 && (
