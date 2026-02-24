@@ -846,7 +846,7 @@ export default function AppScriptBuilderPage() {
                                     <form onSubmit={(e) => handleGenerate(e, true)} className="space-y-6 flex-1 flex flex-col">
                                         <div className="relative flex-1">
                                             <Textarea 
-                                                className="bg-black/20 border-white/10 text-white text-[14px] min-h-[180px] h-full pl-5 pt-5 pr-5 pb-16 placeholder:text-emerald-200/40 focus:bg-black/30 focus:border-white/30 focus-visible:ring-emerald-400/30 rounded-2xl resize-none backdrop-blur-xl transition-all shadow-inner font-geist leading-relaxed custom-scrollbar overflow-y-auto"
+                                                className="bg-black/20 border-white/10 text-white text-[13px] min-h-[180px] h-full pl-5 pt-5 pr-5 pb-16 placeholder:text-emerald-200/40 focus:bg-black/30 focus:border-white/30 focus-visible:ring-emerald-400/30 rounded-2xl resize-none backdrop-blur-xl transition-all shadow-inner font-geist leading-relaxed custom-scrollbar overflow-y-auto"
                                                 placeholder="e.g., 'Add a timestamp to each row and send an email notification when done'..."
                                                 value={refinementPrompt}
                                                 onChange={(e) => setRefinementPrompt(e.target.value)}
