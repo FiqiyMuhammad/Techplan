@@ -43,6 +43,7 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "https://tedu-sigma.vercel.app",
-    "https://techplan-farikhs-projects.vercel.app"
+    "https://techplan-farikhs-projects.vercel.app",
+    "https://www.techplan-web.site"
   ]
 });
