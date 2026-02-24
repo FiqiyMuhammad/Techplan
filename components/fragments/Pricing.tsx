@@ -82,6 +82,28 @@ export default function Pricing() {
               key={plan.name} 
               delay={0.2 * (idx + 1)} 
               width="100%"
+              distance={60}
+              variants={{
+                hidden: { 
+                  opacity: 0, 
+                  y: 50,
+                  scale: 0.94,
+                  filter: "blur(0px)" 
+                },
+                visible: { 
+                  opacity: 1, 
+                  y: 0, 
+                  scale: 1,
+                  filter: "blur(0px)",
+                  transition: {
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 18,
+                    mass: 0.8,
+                    delay: 0.08 * (idx + 1)
+                  }
+                }
+              } as any}
             >
               <div
                 className={cn(

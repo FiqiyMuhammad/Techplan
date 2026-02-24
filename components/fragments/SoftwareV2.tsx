@@ -65,26 +65,30 @@ export default function SoftwareV2() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ staggerChildren: 0.2, delayChildren: 0.3 }}
+          transition={{ staggerChildren: 0.12, delayChildren: 0.2 }}
           className="lg:col-span-4 flex flex-col gap-6 md:gap-8 order-2 lg:order-1"
         >
           {tabs.map((tab, idx) => (
             <motion.div
               key={idx}
               variants={{
-                hidden: { opacity: 0, x: -30 },
+                hidden: { 
+                    opacity: 0, 
+                    x: -60,
+                    filter: "blur(10px)"
+                },
                 visible: { 
                     opacity: 1, 
                     x: 0,
+                    filter: "blur(0px)",
                     transition: { 
-                      type: "spring" as const,
-                      stiffness: 100,
-                      damping: 20,
-                      mass: 1,
-                      bounce: 0,
+                      type: "spring",
+                      stiffness: 110,
+                      damping: 15,
+                      mass: 1
                     }
                 }
-              }}
+              } as any}
               className="relative pl-8 cursor-pointer group"
               onClick={() => { setActiveTab(idx); setIsHovered(true); }}
               onMouseEnter={() => setIsHovered(true)}

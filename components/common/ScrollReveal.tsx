@@ -48,16 +48,22 @@ export const ScrollReveal = ({
   };
 
   const defaultVariants = {
-    hidden: { opacity: 0, ...getInitialStyles() },
-    visible: { opacity: 1, x: 0, y: 0 },
+    hidden: { 
+      opacity: 0, 
+      filter: "blur(10px)",
+      ...getInitialStyles() 
+    },
+    visible: { 
+      opacity: 1, 
+      filter: "blur(0px)",
+      x: 0, 
+      y: 0 
+    },
   };
 
   const defaultTransition: Transition = {
-    type: "spring",
-    stiffness: 100,
-    damping: 20,
-    mass: 1,
-    bounce: 0,
+    duration: 0.8,
+    ease: [0.16, 1, 0.3, 1] as any,
     delay: delay,
   };
 

@@ -15,17 +15,19 @@ export default function Hero() {
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
+  const itemVariants: any = {
+    hidden: { 
+      opacity: 0, 
+      y: 40,
+      filter: "blur(12px)",
+    },
     visible: {
       opacity: 1,
       y: 0,
+      filter: "blur(0px)",
       transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 20,
-        mass: 1,
-        bounce: 0,
+        duration: 1.0,
+        ease: [0.16, 1, 0.3, 1],
       },
     },
   };
