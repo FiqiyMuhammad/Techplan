@@ -2,16 +2,20 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { cn } from "@/lib/utils";
 
-const cardItemVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.95 },
+const cardItemVariants = {
+    hidden: { opacity: 0, y: 15, filter: "blur(8px)" },
     visible: { 
         opacity: 1, 
-        scale: 1,
-        transition: { type: "spring", stiffness: 300, damping: 25 }
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+            duration: 0.7,
+            ease: [0.16, 1, 0.3, 1] as any
+        }
     }
 };
 

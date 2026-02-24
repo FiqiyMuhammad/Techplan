@@ -33,7 +33,7 @@ export default function Hero() {
   };
 
   return (
-    <header id="home" className="relative min-h-[85vh] flex items-center justify-center pt-[140px] pb-[100px] text-center overflow-hidden">
+    <header id="home" className="relative min-h-[85vh] flex items-center justify-center pt-[140px] pb-[40px] md:pb-[100px] text-center overflow-hidden">
       {/* Background Decor */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-[#4F46E5]/8 blur-[160px] rounded-full"></div>
@@ -47,7 +47,7 @@ export default function Hero() {
         animate="visible"
       >
         {/* Headline */}
-        <h1 className="hero-title flex flex-col items-center text-center text-[1.65rem] sm:text-[3rem] md:text-[3.5rem] lg:text-[4rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-semibold font-aspekta py-2">
+        <h1 className="hero-title flex flex-col items-center text-center text-[1.72rem] sm:text-[3.05rem] md:text-[3.8rem] lg:text-[4.5rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-semibold font-aspekta py-2">
           <motion.span 
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[45%] to-[#3A96F6] bg-clip-text text-transparent pb-1"

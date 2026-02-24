@@ -7,9 +7,9 @@ import LogoRolling from "./LogoRolling";
 
 export default function Instruction() {
   return (
-    <section id="instruction" className="instruction bg-white pt-12 md:pt-24 pb-4 overflow-hidden">
+    <section id="instruction" className="instruction bg-white pt-4 md:pt-12 pb-4 overflow-hidden">
       <LogoRolling />
-      <div className="container mx-auto px-8">
+      <div className="container mx-auto px-8 mt-16 md:mt-12">
         <SectionHeader 
           className="mb-8 md:mb-16"
           title={[

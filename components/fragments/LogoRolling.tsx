@@ -13,7 +13,7 @@ const scrollingLogos = [...logos, ...logos, ...logos, ...logos, ...logos, ...log
 
 export default function LogoRolling() {
   return (
-    <div className="w-full py-10 overflow-hidden bg-white">
+    <div className="w-full pt-0 pb-12 md:pt-0 md:pb-8 overflow-hidden bg-white">
       <div className="relative flex overflow-hidden">
         <motion.div
           className="flex whitespace-nowrap gap-12 md:gap-24 items-center"

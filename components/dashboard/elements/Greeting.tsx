@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 export function Greeting({ firstName }: { firstName: string }) {
     const [greeting, setGreeting] = useState("Welcome back");
@@ -29,14 +30,38 @@ export function Greeting({ firstName }: { firstName: string }) {
         updateDate();
     }, []);
 
+    const containerVariants = {
+        visible: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const textVariants = {
+        hidden: { opacity: 0, x: -10, filter: "blur(8px)" },
+        visible: { 
+            opacity: 1, 
+            x: 0, 
+            filter: "blur(0px)",
+            transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any }
+        }
+    };
+
     return (
-        <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-aspekta tracking-tighter">
+        <motion.div variants={containerVariants}>
+            <motion.h1 
+                variants={textVariants}
+                className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-aspekta tracking-tighter"
+            >
                 {firstName ? `${greeting}, ${firstName}` : `${greeting}`}
-            </h1>
-            <p className="text-gray-500 text-base font-geist font-medium mt-1">
+            </motion.h1>
+            <motion.p 
+                variants={textVariants}
+                className="text-gray-500 text-base font-geist font-medium mt-1"
+            >
                 {dateString}
-            </p>
-        </div>
+            </motion.p>
+        </motion.div>
     );
 }

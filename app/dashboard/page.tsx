@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   CalendarIcon,
   CommandLineIcon,
@@ -33,31 +33,29 @@ interface ExtendedUser {
   image?: string;
 }
 
-const containerVariants: Variants = {
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.05
+      staggerChildren: 0.08,
+      delayChildren: 0.1
     }
   }
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 8, filter: "blur(4px)" },
-  visible: { 
-    opacity: 1, 
+const itemVariants = {
+  hidden: { opacity: 0, y: 20, filter: "blur(10px)" },
+  visible: {
+    opacity: 1,
     y: 0,
     filter: "blur(0px)",
     transition: {
-      duration: 0.4,
-      ease: [0.25, 1, 0.5, 1] as const
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1] as any
     }
   }
 };
-
-
 
 
 // Components moved to separate files for optimization
@@ -130,11 +128,10 @@ export default function DashboardPage() {
                <CreditsUsage stats={stats} />
             </motion.div>
 
-            {/* 4. Professional Tools */}
             <div className="space-y-6 order-4 mt-8 lg:mt-0">
-               <div className="flex items-center justify-between px-2">
+               <motion.div variants={itemVariants} className="flex items-center justify-between px-2">
                    <h2 className="text-xl font-bold font-aspekta tracking-tight text-gray-900 dark:text-white uppercase text-[11px] tracking-[0.2em] opacity-50">Professional Tools</h2>
-               </div>
+               </motion.div>
                <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <ActionCard 
                        title="Curriculum" 
