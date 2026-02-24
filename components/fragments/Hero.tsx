@@ -33,7 +33,7 @@ export default function Hero() {
   };
 
   return (
-    <header id="home" className="relative min-h-[85vh] flex items-center justify-center pt-[140px] pb-[100px] text-center overflow-hidden">
+    <header id="home" className="relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center pt-[120px] md:pt-[140px] pb-[40px] md:pb-[100px] text-center overflow-hidden">
       {/* Background Decor */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-[#4F46E5]/8 blur-[160px] rounded-full"></div>
@@ -79,7 +79,7 @@ export default function Hero() {
         {/* CTA Buttons */}
         <motion.div 
           variants={itemVariants}
-          className="hero-btns flex justify-center mb-20 px-4"
+          className="hero-btns flex justify-center mb-8 md:mb-20 px-4"
         >
           <Link 
             href="#features" 
