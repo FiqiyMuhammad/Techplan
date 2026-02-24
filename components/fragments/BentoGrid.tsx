@@ -23,6 +23,7 @@ import Marquee from "@/components/magicui/marquee";
 import { AnimatedList } from "@/components/magicui/animated-list";
 import { AnimatedBeam } from "@/components/magicui/animated-beam";
 import { SectionHeader } from "../common/SectionHeader";
+import { ScrollReveal } from "../common/ScrollReveal";
 
 const files = [
   {
@@ -433,7 +434,15 @@ export function BentoDemo() {
         
         <BentoGrid className="max-w-7xl mx-auto">
           {features.map((feature, idx) => (
-             <BentoCard key={idx} {...feature} />
+             <ScrollReveal 
+               key={idx} 
+               delay={idx * 0.1} 
+               direction="up" 
+               width="100%"
+               className={feature.className}
+             >
+               <BentoCard {...feature} className="h-full" />
+             </ScrollReveal>
           ))}
         </BentoGrid>
       </div>

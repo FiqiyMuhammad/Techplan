@@ -142,9 +142,9 @@ export default function Navbar() {
                   <Image 
                     src="/logoku/logo1/logo-full.svg" 
                     alt="TechPlan Logo" 
-                    width={140} 
-                    height={40} 
-                    className="h-7 w-auto object-contain"
+                    width={160} 
+                    height={46} 
+                    className="h-9 w-auto object-contain"
                   />
                 </Link>
                 <button 
@@ -159,7 +159,7 @@ export default function Navbar() {
               <div className="flex-1 overflow-y-auto no-scrollbar">
                 <ul className="flex flex-col">
                   {navItems.map((item) => (
-                    <li key={item} className="border-b border-gray-50 last:border-none">
+                    <li key={item} className="border-b border-gray-100 last:border-none">
                       <Link 
                         href={`#${item.toLowerCase()}`}
                         onClick={() => setIsOpen(false)}
