@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Image from "next/image";
 import CircuitCanvas from "../elements/CircuitCanvas";
 import { SectionHeader } from "../common/SectionHeader";
@@ -28,26 +27,8 @@ export default function Instruction() {
         
         <CircuitCanvas />
 
-        <motion.div 
-          className="circuit-objects relative z-[10] w-full h-full flex justify-between md:justify-around items-center max-w-[1200px] mx-auto px-4 md:px-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ staggerChildren: 0.15, delayChildren: 0.2 }}
-        >
-          <motion.div 
-            id="obj-1" 
-            className="obj flex flex-col items-center justify-center p-2 md:p-4"
-            variants={{
-              hidden: { opacity: 0, x: -40, filter: "blur(10px)" },
-              visible: { 
-                opacity: 1, 
-                x: 0, 
-                filter: "blur(0px)",
-                transition: { type: "spring", stiffness: 100, damping: 15 }
-              }
-            } as any}
-          >
+        <div className="circuit-objects relative z-[10] w-full h-full flex justify-between md:justify-around items-center max-w-[1200px] mx-auto px-4 md:px-8">
+          <div id="obj-1" className="obj flex flex-col items-center justify-center p-2 md:p-4">
             <div className="obj-inner relative group transition-transform duration-500 hover:scale-105">
               <Image 
                 src="/img/document.svg" 
@@ -57,21 +38,9 @@ export default function Instruction() {
                 className="w-[50px] md:w-[100px] h-auto drop-shadow-2xl"
               />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            id="obj-2" 
-            className="obj flex flex-col items-center justify-center p-2 md:p-4"
-            variants={{
-              hidden: { opacity: 0, scale: 0.8, filter: "blur(10px)" },
-              visible: { 
-                opacity: 1, 
-                scale: 1, 
-                filter: "blur(0px)",
-                transition: { type: "spring", stiffness: 100, damping: 15 }
-              }
-            } as any}
-          >
+          <div id="obj-2" className="obj flex flex-col items-center justify-center p-2 md:p-4">
             <div className="obj-inner relative w-[120px] h-[120px] md:w-[240px] md:h-[240px] flex items-center justify-center scale-90 md:scale-100">
                {/* Outer Glow */}
                <div className="absolute inset-0 rounded-full bg-[#3B9AF7]/30 blur-2xl md:blur-3xl"></div>
@@ -93,21 +62,9 @@ export default function Instruction() {
                  />
                </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div 
-            id="obj-3" 
-            className="obj flex flex-col items-center justify-center p-2 md:p-4"
-            variants={{
-              hidden: { opacity: 0, x: 40, filter: "blur(10px)" },
-              visible: { 
-                opacity: 1, 
-                x: 0, 
-                filter: "blur(0px)",
-                transition: { type: "spring", stiffness: 100, damping: 15 }
-              }
-            } as any}
-          >
+          <div id="obj-3" className="obj flex flex-col items-center justify-center p-2 md:p-4">
             <div className="obj-inner relative group transition-transform duration-500 hover:scale-105">
               <Image 
                 src="/img/document.svg" 
@@ -117,8 +74,8 @@ export default function Instruction() {
                 className="w-[50px] md:w-[100px] h-auto drop-shadow-2xl"
               />
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
 
     </section>
