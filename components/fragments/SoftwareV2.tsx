@@ -51,7 +51,10 @@ export default function SoftwareV2() {
       <div className="container mx-auto">
         <SectionHeader 
           title="The Intelligent Hub Of Academic Excellence"
-          description="From automated AI curriculum design to smart scheduling, TechPlan provides the unified workspace you need to eliminate manual chaos and optimize every single flow"
+          description={[
+            "From automated AI curriculum design to smart scheduling, TechPlan provides the unified",
+            "workspace you need to eliminate manual chaos and optimize every single flow."
+          ]}
         />
       </div>
 
@@ -69,13 +72,16 @@ export default function SoftwareV2() {
             <motion.div
               key={idx}
               variants={{
-                hidden: { opacity: 0, x: -70 },
+                hidden: { opacity: 0, x: -30 },
                 visible: { 
                     opacity: 1, 
                     x: 0,
                     transition: { 
-                      duration: 1.0, 
-                      ease: [0.16, 1, 0.3, 1] as const
+                      type: "spring" as const,
+                      stiffness: 100,
+                      damping: 20,
+                      mass: 1,
+                      bounce: 0,
                     }
                 }
               }}

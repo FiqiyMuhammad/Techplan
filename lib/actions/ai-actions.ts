@@ -33,8 +33,8 @@ export async function generateAppScript(
 
   try {
     // 1. Determine Credits based on provider
-    const costs = { openrouter: 15, google: 10, groq: 5 };
-    const cost = costs[provider] || 10;
+    const costs = { openrouter: 5, google: 3, groq: 2 };
+    const cost = costs[provider] || 3;
 
     // 2. Verify and Deduct
     const creditCheck = await verifyAndDeductCredits(cost);
@@ -69,8 +69,8 @@ export async function generateCurriculum(
 
   try {
     // 1. Determine Credits
-    const costs = { openrouter: 15, google: 10, groq: 5 };
-    const cost = costs[provider] || 10;
+    const costs = { openrouter: 5, google: 3, groq: 2 };
+    const cost = costs[provider] || 3;
 
     // 2. Verify and Deduct
     const creditCheck = await verifyAndDeductCredits(cost);

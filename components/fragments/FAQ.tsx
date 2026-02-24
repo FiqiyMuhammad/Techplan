@@ -21,8 +21,11 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1] as const,
+      type: "spring" as const,
+      stiffness: 100,
+      damping: 20,
+      mass: 1,
+      bounce: 0,
     },
   },
 };
@@ -62,9 +65,9 @@ export default function FAQ() {
   ];
 
   return (
-    <section id="faq" className="w-full bg-white py-24 pb-32">
+    <section id="faq" className="w-full bg-white py-16 pb-24">
             <div className="container mx-auto px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
             
                 {/* Left Side: Sticky Title */}
                 <motion.div 
@@ -76,13 +79,13 @@ export default function FAQ() {
                 >
                     <motion.h2 
                         variants={itemVariants}
-                        className="text-[1.65rem] md:text-[2.5rem] leading-[1.1] font-semibold mb-6 font-aspekta tracking-[-0.03em] bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-1"
+                        className="text-[1.35rem] md:text-[2rem] leading-[1.15] font-semibold mb-4 font-aspekta tracking-[-0.03em] bg-gradient-to-r from-black from-30% to-[#3A96F6] bg-clip-text text-transparent pb-1"
                     >
                         Technical Architectures
                     </motion.h2>
                     <motion.p 
                         variants={itemVariants}
-                        className="text-gray-500 font-geist leading-relaxed mb-8 text-sm"
+                        className="text-gray-500 font-geist leading-relaxed mb-6 text-xs md:text-sm"
                     >
                         Everything you need to know about implementing TechPlan in your institution.
                     </motion.p>
@@ -108,14 +111,14 @@ export default function FAQ() {
                             >
                                 <button
                                     onClick={() => toggleFAQ(index)}
-                                    className="w-full flex items-center justify-between py-5 md:py-6 px-6 md:px-8 text-left focus:outline-none bg-white z-20 relative"
+                                    className="w-full flex items-center justify-between py-4 md:py-5 px-5 md:px-7 text-left focus:outline-none bg-white z-20 relative"
                                 >
-                                    <span className={`text-lg font-medium font-aspekta pr-8 transition-colors duration-300 ${
+                                    <span className={`text-base md:text-lg font-medium font-aspekta pr-8 transition-colors duration-300 ${
                                         openIndex === index ? "text-blue-600" : "text-gray-900"
                                     }`}>
                                         {faq.question}
                                     </span>
-                                    <span className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-full border border-gray-100 bg-white transition-all duration-300 ${
+                                    <span className={`flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full border border-gray-100 bg-white transition-all duration-300 ${
                                         openIndex === index ? "bg-black border-black text-white rotate-45" : "text-gray-400"
                                     }`}>
                                         <svg 
@@ -138,7 +141,7 @@ export default function FAQ() {
                                             transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                                             className="relative z-10"
                                         >
-                                            <div className="px-6 md:px-8 pb-6 pt-0 text-gray-500 font-geist leading-relaxed text-base bg-white">
+                                            <div className="px-5 md:px-7 pb-5 pt-0 text-gray-500 font-geist leading-relaxed text-xs md:text-sm bg-white">
                                                 {faq.answer}
                                             </div>
                                         </motion.div>

@@ -53,9 +53,12 @@ export const ScrollReveal = ({
   };
 
   const defaultTransition: Transition = {
-    duration: 0.8,
+    type: "spring",
+    stiffness: 100,
+    damping: 20,
+    mass: 1,
+    bounce: 0,
     delay: delay,
-    ease: [0.16, 1, 0.3, 1],
   };
 
   return (

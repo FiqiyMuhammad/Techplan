@@ -71,12 +71,19 @@ export function DashboardFooter() {
           </div>
 
           <div className="col-span-2 md:col-span-2 lg:col-span-2 space-y-4 hidden md:block">
-            <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Support</h5>
-            <div className="flex flex-col gap-3">
-              <Link href="mailto:hello@techplan.com" className="text-sm font-bold text-blue-400 hover:text-blue-300 hover:underline transition-colors leading-none">
-                hello@techplan.com
-              </Link>
-            </div>
+            <h5 className="text-[10px] font-bold text-blue-300/40 uppercase tracking-[0.2em]">Contact</h5>
+            <ul className="space-y-3">
+              <li>
+                <Link href="https://wa.me/6281809885289" className="text-sm font-semibold text-white/70 hover:text-blue-400 transition-all">
+                  +6281809885289
+                </Link>
+              </li>
+              <li>
+                <Link href="mailto:muhammadfiqiy99@gmail.com" className="text-sm font-semibold text-white/70 hover:text-blue-400 transition-all">
+                  muhammadfiqiy99@gmail.com
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 

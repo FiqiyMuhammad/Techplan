@@ -7,26 +7,23 @@ import { motion, Variants } from "framer-motion";
 export default function Footer() {
   const footerLinks = {
     Product: [
-      { name: "Features", href: "#solution" },
+      { name: "Features", href: "#features" },
+      { name: "AI Orchestration", href: "#instruction" },
       { name: "Integrations", href: "#integrations" },
-      { name: "Schedules", href: "#instruction" },
       { name: "Pricing", href: "#pricing" },
     ],
-    Company: [
-      { name: "About Us", href: "#about" },
-      { name: "Careers", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Compliance", href: "#specs" },
+    Solutions: [
+      { name: "Curriculum Design", href: "#features" },
+      { name: "AppScript Builder", href: "#specs" },
+      { name: "Workflow Automation", href: "#instruction" },
+      { name: "Schedule", href: "#integrations" },
     ],
-    Resources: [
-      { name: "Support Center", href: "#faq" },
-      { name: "LMS Integration", href: "#" },
-      { name: "University Portal", href: "#" },
-      { name: "Mobile App", href: "#extension" },
+    Contact: [
+      { name: "+6281809885289", href: "https://wa.me/6281809885289" },
+      { name: "muhammadfiqiy99@gmail.com", href: "mailto:muhammadfiqiy99@gmail.com" },
     ],
   };
 
-  const premiumEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -45,8 +42,11 @@ export default function Footer() {
       opacity: 1,
       y: 0,
       transition: { 
-        duration: 0.8, 
-        ease: premiumEase
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+        mass: 1,
+        bounce: 0,
       },
     },
   };
@@ -57,8 +57,11 @@ export default function Footer() {
       opacity: 1,
       x: 0,
       transition: { 
-        duration: 0.8, 
-        ease: premiumEase
+        type: "spring",
+        stiffness: 100,
+        damping: 20,
+        mass: 1,
+        bounce: 0,
       },
     },
   };
@@ -79,10 +82,10 @@ export default function Footer() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
           variants={containerVariants}
-          className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-12 mb-16"
+          className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16"
         >
           {/* Logo & Description Column */}
-          <motion.div variants={columnVariants} className="col-span-2 lg:col-span-1 flex flex-col">
+          <motion.div variants={columnVariants} className="md:col-span-4 lg:col-span-5 flex flex-col">
             <motion.div variants={slideRight} className="footer-logo mb-6 flex items-center gap-2">
                <NextImage 
                  src="/logoku/logo1/logo-full.svg" 
@@ -93,34 +96,36 @@ export default function Footer() {
                />
             </motion.div>
             <motion.p variants={slideRight} className="text-gray-500 text-base leading-relaxed max-w-[280px] font-geist">
-              The unified workspace for modern education planning and outcome-driven curriculum engineering.
+              The AI-first operating system for educational excellence. We help institutions move from manual complexity to automated, outcome-driven engineering.
             </motion.p>
           </motion.div>
           
-          {/* Link Columns */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <motion.div 
-              key={category} 
-              variants={columnVariants}
-              className="flex flex-col"
-            >
-              <motion.h5 
-                variants={slideUp} 
-                className="font-bold text-gray-900 mb-6 font-geist text-sm uppercase tracking-widest"
+          {/* Link Columns - Grouped together */}
+          <div className="md:col-span-8 lg:col-span-7 flex flex-row flex-nowrap justify-between md:justify-end gap-x-8 md:gap-x-12 lg:gap-x-20 overflow-x-auto no-scrollbar">
+            {Object.entries(footerLinks).map(([category, links]) => (
+              <motion.div 
+                key={category} 
+                variants={columnVariants}
+                className="flex flex-col min-w-[140px]"
               >
-                {category}
-              </motion.h5>
-              <ul className="flex flex-col gap-4">
-                {links.map((link) => (
-                  <motion.li key={link.name} variants={slideUp}>
-                    <Link href={link.href} className="text-gray-500 hover:text-blue-600 transition-colors text-base font-geist">
-                      {link.name}
-                    </Link>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+                <motion.h5 
+                  variants={slideUp} 
+                  className="font-bold text-gray-900 mb-6 font-geist text-sm uppercase tracking-widest"
+                >
+                  {category}
+                </motion.h5>
+                <ul className="flex flex-col gap-4">
+                  {links.map((link) => (
+                    <motion.li key={link.name} variants={slideUp}>
+                      <Link href={link.href} className="text-gray-500 hover:text-blue-600 transition-colors text-base font-geist">
+                        {link.name}
+                      </Link>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
         
         <div className="pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">

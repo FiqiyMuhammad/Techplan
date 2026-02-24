@@ -7,11 +7,11 @@ export async function middleware(request: NextRequest) {
     // Better-Auth usually stores session in a cookie
     const sessionCookie = request.cookies.get("better-auth.session_token") || request.cookies.get("__Secure-better-auth.session_token");
     
-    // Temporarily disabled for development access
+    /* // Temporarily disabled for development access
     if (!sessionCookie) {
       const signInUrl = new URL("/sign-in", request.url);
       return NextResponse.redirect(signInUrl);
-    }
+    } */
   }
 
   return NextResponse.next();

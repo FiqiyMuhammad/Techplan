@@ -45,7 +45,7 @@ export function Scratchpad() {
 
     return (
         <div 
-            className="h-full min-h-[300px] bg-yellow-50 dark:bg-yellow-600/10 border border-yellow-200 dark:border-yellow-500/30 rounded-xl p-6 flex flex-col relative group shadow-sm transition-all"
+            className="bg-yellow-50 dark:bg-yellow-600/10 border border-yellow-200 dark:border-yellow-500/30 rounded-xl p-6 flex flex-col relative group shadow-sm transition-all"
         >
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-500 font-bold text-[11px]">

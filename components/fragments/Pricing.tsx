@@ -20,12 +20,12 @@ const plans = [
       "Access to GPT-4o Mini",
       "Standard Drag-and-Drop Scheduler",
       "1 Active Institutional Project",
-      "Community Forum Access",
+      "Basic AI Prompt Templates",
     ],
   },
   {
-    name: "Intermediate Plan",
-    title: "IDR 149.000",
+    name: "Pro Plan",
+    title: "IDR XX.XXX",
     description: "Empowering departments with advanced AI-driven coordination.",
     billing: "Billed monthly",
     price: { monthly: 149000, yearly: 149000 },
@@ -38,13 +38,13 @@ const plans = [
       "Advanced Conflict Detection Engine",
       "10 Active Institutional Projects",
       "Custom Pedagogical Frameworks",
-      "Google Workspace & Classroom Sync",
+      "Advanced Usage Analytics",
       "Priority Email Support",
     ],
   },
   {
-    name: "Advanced Plan",
-    title: "IDR 249.000",
+    name: "Founder Plan",
+    title: "IDR XX.XXX",
     description: "The complete infrastructure for large-scale institutional transformation.",
     billing: "Billed monthly",
     price: { monthly: 249000, yearly: 249000 },
@@ -56,11 +56,11 @@ const plans = [
       "Full Access to SOTA Models (Opus/Pro)",
       "Real-time AI Conflict Resolution Hub",
       "Unlimited Institutional Projects",
-      "Custom LMS Integrations (Canvas/Moodle)",
       "Institutional-wide Data Analytics",
-      "Early Access to SV2 (Teacher Agent)",
+      "Early Access to New AI Agents",
       "White-label Dashboard Branding",
-      "Enterprise-Grade Encryption & SSO",
+      "Dedicated Onboarding Support",
+      "Custom Security & SSO Integration",
       "Strategic Progress Monitoring",
     ],
   },
@@ -72,7 +72,10 @@ export default function Pricing() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <SectionHeader 
           title="Invest in Educational Excellence"
-          description="Select the ideal foundation for your institution's digital evolution. From individual classroom optimization to district-wide AI orchestration, TechPlan provides the infrastructure for next-generation pedagogy."
+          description={[
+            "Select the ideal foundation for your institution's digital evolution. From individual classroom optimization to",
+            "district-wide AI orchestration, TechPlan provides the infrastructure for next-generation pedagogy."
+          ]}
         />
 
         <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-y-6 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8">
@@ -86,11 +89,11 @@ export default function Pricing() {
                 className={cn(
                   "relative h-full flex flex-col rounded-3xl p-8 ring-1 ring-gray-200 transition-all duration-300 hover:shadow-2xl",
                   plan.highlight
-                    ? "text-white ring-0 shadow-[0_20px_50px_-15px_rgba(58,150,246,0.3)] scale-[1.02] z-10 overflow-hidden"
+                    ? "text-white ring-0 shadow-[0_20px_50px_-15px_rgba(4,25,49,0.3)] scale-[1.05] z-10 overflow-hidden"
                     : "bg-white text-gray-900"
                 )}
                 style={plan.highlight ? { 
-                  background: "radial-gradient(circle at 90% 10%, #05182F 0%, transparent 60%), radial-gradient(circle at 10% 90%, #041931 0%, transparent 60%), #000000"
+                  background: "linear-gradient(135deg, #01060D 0%, #041931 50%, #010811 100%)"
                 } : {}}
               >
                 {plan.highlight && (
@@ -105,8 +108,8 @@ export default function Pricing() {
                   {/* Header Section */}
                   <div className="min-h-[160px]">
                     <h3 className={cn(
-                      "text-sm font-bold font-aspekta tracking-widest uppercase",
-                      plan.highlight ? "text-[#3A96F6]" : "text-gray-400"
+                      "text-2xl font-bold font-aspekta tracking-tighter",
+                      plan.highlight ? "text-white" : "text-gray-900"
                     )}>
                       {plan.name}
                     </h3>
@@ -192,7 +195,7 @@ export default function Pricing() {
                         <li key={feature} className="flex gap-x-3 items-start">
                           <div className={cn(
                             "flex h-5 w-5 flex-none items-center justify-center rounded-full mt-0.5",
-                            plan.highlight ? "bg-blue-500/20 text-[#3A96F6]" : "bg-blue-50 text-[#3A96F6]"
+                            plan.highlight ? "bg-white/10 text-white" : "bg-blue-50 text-[#3A96F6]"
                           )}>
                              <Check className="h-3 w-3 stroke-[4]" />
                           </div>

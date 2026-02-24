@@ -35,8 +35,11 @@ export default function Navbar() {
       opacity: 1, 
       y: 0,
       transition: {
-        duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 20,
+        mass: 1,
+        bounce: 0,
       }
     },
   };

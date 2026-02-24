@@ -26,24 +26,24 @@ import { SectionHeader } from "../common/SectionHeader";
 
 const files = [
   {
-    name: "strategic_v2.pdf ",
-    body: "Strategic manuals synced across every department now",
+    name: "strategic_growth_v2.pdf",
+    body: "Accelerated institutional frameworks synced in real-time.",
   },
   {
-    name: "planner_resource.xlsx",
-    body: "Centralized planning that is seamless to update and share !",
+    name: "high_velocity_planner.xlsx",
+    body: "Precision-engineered scheduling for maximum classroom efficiency.",
   },
   {
-    name: "attainment_track.csv",
-    body: "Aggregated data makes tracking results a precise procedure",
+    name: "pedagogical_analytics.csv",
+    body: "Data-driven insights for rapid curriculum iteration.",
   },
   {
-    name: "concept_notes.doc",
-    body: "Organized guides always reaching central core system",
+    name: "workflow_standard.doc",
+    body: "Optimized operational guides for seamless team alignment.",
   },
   {
-    name: "annual_audit_2026.pdf",
-    body: "Reduced administrative overhead during annual review.",
+    name: "institutional_audit_2026.pdf",
+    body: "Zero-friction reporting for streamlined compliance checks.",
   },
 ];
 
@@ -113,6 +113,10 @@ const NotificationCard = ({ name, description, icon, color, time }: Notification
           </p>
         </div>
       </div>
+
+      {/* Decorative corner accents */}
+      <div className="pointer-events-none absolute -top-10 -left-10 h-24 w-24 rounded-full bg-[#D7E4FD]/30 blur-2xl" />
+      <div className="pointer-events-none absolute -bottom-10 -right-10 h-24 w-24 rounded-full bg-[#D7E4FD]/30 blur-2xl" />
     </figure>
   );
 };
@@ -123,7 +127,7 @@ const Circle = React.forwardRef<HTMLDivElement, { children?: React.ReactNode; cl
       <div
         ref={ref}
         className={cn(
-          "z-10 flex h-10 w-10 items-center justify-center rounded-full border border-blue-500/20 bg-slate-900/50 backdrop-blur-sm shadow-[0_0_20px_-10px_rgba(58,150,246,0.3)]",
+          "z-10 flex h-10 w-10 items-center justify-center rounded-full md:border md:border-blue-500/20 md:bg-slate-900/50 md:backdrop-blur-sm md:shadow-[0_0_20px_-10px_rgba(58,150,246,0.3)]",
           className,
         )}
       >
@@ -150,81 +154,89 @@ const IntegrationsDemo = () => {
       className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#020617]"
       ref={containerRef}
     >
-      {/* Premium Background Effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(58,150,246,0.15),transparent_70%)]" />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] brightness-100 contrast-150" />
-      
-      <div className="flex h-full w-full flex-col items-center justify-center gap-6 md:gap-10 z-10 p-4">
-        {/* Top Row: Closer together on mobile */}
-        <div className="flex flex-row items-center gap-16 md:gap-32">
-          <Circle ref={div1Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
-            <Database className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
-          </Circle>
-          <Circle ref={div5Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
-            <Cpu className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
-          </Circle>
+      {/* Graphic Content - Centered & Symmetrical */}
+      <div className="relative flex h-full w-full flex-col items-center justify-center space-y-1 md:space-y-4 z-10 p-8">
+        {/* Top Row */}
+        <div className="flex flex-row items-center justify-center gap-14 md:gap-28 lg:gap-40 w-full px-4">
+           <Circle ref={div1Ref} className="h-10 w-10 md:h-14 md:w-14">
+             <Database className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
+           </Circle>
+           <div className="h-10 w-24 md:h-14 md:w-32 lg:w-40 invisible shrink-0" />
+           <Circle ref={div5Ref} className="h-10 w-10 md:h-14 md:w-14">
+             <Cpu className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
+           </Circle>
         </div>
 
-        {/* Middle Row: The Core Hub */}
-        <div className="flex flex-row items-center gap-10 md:gap-16">
-          <Circle ref={div2Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
+        {/* Middle Row */}
+        <div className="flex flex-row items-center justify-center gap-14 md:gap-28 lg:gap-40 w-full px-4">
+          <Circle ref={div2Ref} className="h-10 w-10 md:h-14 md:w-14">
             <Cloud className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
 
-          <div className="relative h-24 w-24 md:h-32 md:w-32 flex items-center justify-center">
-             {/* Multi-layered Core Glow */}
-             <div className="absolute inset-[-15px] rounded-full bg-blue-500/15 blur-2xl animate-pulse" />
-             
-             {/* Decorative Rings */}
-             <motion.div 
-               animate={{ rotate: 360 }}
-               transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-               className="absolute inset-[-5px] rounded-full border border-dashed border-blue-400/30"
-             />
-             <motion.div 
-               animate={{ rotate: -360 }}
-               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-               className="absolute inset-[2px] rounded-full border border-dotted border-blue-500/20"
-             />
+            <div className="relative h-24 w-24 md:h-32 lg:h-36 lg:w-36 md:w-32 flex items-center justify-center">
+              {/* Pulsing Outer Glow */}
+              <div className="hidden md:block absolute inset-0 rounded-full bg-blue-500/10 animate-ping duration-[4s]" />
+              
+              {/* Rotating Background & Rings */}
+              <motion.div 
+                animate={{ rotate: 360 }}
+                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                className="hidden md:flex absolute inset-0 rounded-full bg-gradient-to-br from-[#3A96F6] via-[#3B82F6] to-[#1D4ED8] shadow-[0_0_60px_-10px_rgba(58,150,246,0.5),inset_0_0_30px_rgba(255,255,255,0.2)] items-center justify-center p-1"
+              >
+                <div className="h-full w-full rounded-full border-[3px] md:border-[5px] border-white/90 border-t-white/30 border-l-white/50" />
+              </motion.div>
 
-             {/* The Hub Node */}
-             <motion.div 
+              {/* Static Central Icon */}
+              <motion.div 
                 ref={div6Ref}
-                className="z-20 h-16 w-16 md:h-20 md:w-20 rounded-full bg-gradient-to-br from-[#3A96F6] to-[#1D4ED8] flex items-center justify-center shadow-[0_0_40px_rgba(58,150,246,0.6)] border-2 border-white/30"
-             >
-                <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
+                animate={{ 
+                  y: [0, -3, 0],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="z-20 h-11 w-11 md:h-16 lg:h-22 lg:w-22 md:w-16 rounded-full bg-blue-600/20 backdrop-blur-md flex items-center justify-center shadow-inner"
+              >
                 <Image 
                   src="/logoku/logo2/logo-aja2.svg" 
                   alt="TechPlan Logo" 
                   width={64} 
                   height={64}
-                  className="w-10 h-10 md:w-16 md:h-16 brightness-0 invert drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]"
+                  className="w-7 h-7 md:w-12 lg:w-16 lg:h-16 md:h-12 brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
                 />
-             </motion.div>
-          </div>
+              </motion.div>
 
-          <Circle ref={div7Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
+              {/* Glossy Reflection (Static) */}
+              <div className="hidden md:block absolute top-2.5 md:top-3.5 left-3.5 md:left-5.5 w-1/2 h-1/4 bg-gradient-to-b from-white/20 to-transparent rounded-full blur-[2px] md:blur-[3px] pointer-events-none z-30" />
+            </div>
+          <Circle ref={div7Ref} className="h-10 w-10 md:h-14 md:w-14">
             <FileText className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
 
-        {/* Bottom Row: Closer together on mobile */}
-        <div className="flex flex-row items-center gap-16 md:gap-32">
-          <Circle ref={div3Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
+        {/* Bottom Row */}
+        <div className="flex flex-row items-center justify-center gap-14 md:gap-28 lg:gap-40 w-full px-4">
+          <Circle ref={div3Ref} className="h-10 w-10 md:h-14 md:w-14">
             <Globe className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
-          <Circle ref={div4Ref} className="h-11 w-11 md:h-14 md:w-14 border-blue-500/30 bg-blue-500/10 shadow-[0_0_15px_rgba(58,150,246,0.1)]">
+          <div className="h-10 w-24 md:h-14 md:w-32 lg:w-40 invisible shrink-0" />
+          <Circle ref={div4Ref} className="h-10 w-10 md:h-14 md:w-14">
             <SquareDashedBottomCode className="h-5 w-5 md:h-7 md:w-7 text-[#3A96F6]" />
           </Circle>
         </div>
       </div>
 
-      <AnimatedBeam containerRef={containerRef} fromRef={div1Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-15} duration={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div2Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={5} duration={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div3Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={15} duration={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div4Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-5} duration={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div5Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={-15} duration={3} />
-      <AnimatedBeam containerRef={containerRef} fromRef={div7Ref} toRef={div6Ref} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" curvature={15} duration={3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div1Ref} toRef={div6Ref} curvature={-70} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div2Ref} toRef={div6Ref} curvature={0} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div3Ref} toRef={div6Ref} curvature={70} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} />
+      <AnimatedBeam containerRef={containerRef} fromRef={div4Ref} toRef={div6Ref} curvature={70} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} reverse />
+      <AnimatedBeam containerRef={containerRef} fromRef={div5Ref} toRef={div6Ref} curvature={-70} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} reverse />
+      <AnimatedBeam containerRef={containerRef} fromRef={div7Ref} toRef={div6Ref} curvature={0} duration={3} gradientStartColor="#3A96F6" gradientStopColor="#60A5FA" pathOpacity={0.3} reverse />
+      
+      {/* Subtle depth fades */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_20%,rgba(2,6,23,0.3)_100%)] pointer-events-none" />
     </div>
   );
 };
@@ -273,10 +285,10 @@ const ScatteredDocumentation = () => {
 
       <div className="flex flex-col gap-2 z-10 pt-4">
         <h3 className="text-xl font-bold font-aspekta text-gray-900 dark:text-gray-100">
-          Integrated Hub Manuals
+          Quantum Productivity
         </h3>
         <p className="text-gray-500 font-geist text-sm leading-relaxed">
-          Your expertise focused in a network of connected frameworks and dynamic files
+          Maximize institutional output with high-fidelity document engineering. Automate your complex workflows with unparalleled precision.
         </p>
         <div className="pt-1">
            <Button
@@ -294,10 +306,10 @@ const ScatteredDocumentation = () => {
 const SchedulingChaos = () => {
   return (
     <div 
-      className="absolute inset-0 w-full h-full flex flex-col md:flex-row items-center pointer-events-none p-4 md:p-6 gap-2 md:gap-8 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_15%,#000_85%,transparent_100%)]"
+      className="absolute inset-0 w-full h-full flex flex-col md:flex-row items-center pointer-events-none pt-0 p-4 md:p-6 gap-1 md:gap-8 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_15%,#000_85%,transparent_100%)]"
     >
       {/* Cards: On top for mobile, left for desktop */}
-      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-start scale-75 md:scale-90 origin-center md:origin-left translate-y-4 md:translate-y-8">
+      <div className="w-full md:w-1/2 flex items-center justify-center md:justify-start scale-90 md:scale-90 origin-center md:origin-left -translate-y-4 md:translate-y-8">
         <AnimatedList className="w-full">
           {notifications.map((item, idx) => (
             <NotificationCard {...item} key={idx} />
@@ -311,10 +323,10 @@ const SchedulingChaos = () => {
              <span className="text-[10px] md:text-sm font-bold tracking-wider text-[#3A96F6] uppercase">Real-time Activity</span>
            </div>
            <h3 className="text-xl md:text-2xl font-bold font-aspekta text-gray-900 dark:text-gray-100 leading-tight">
-             Intelligent Coordination
+             Integrated Resource Hub
            </h3>
            <p className="text-gray-500 font-geist text-xs md:text-sm leading-relaxed max-w-[280px] md:max-w-full">
-             Everything synchronizes automatically. TechPlan tracks your mind maps and scripts across the entire institution.
+             The ultimate engine for institutional agility. Seamlessly engineer and synchronize everything from curriculum frameworks and custom scripts to dynamic planners and visual brainstorms.
            </p>
         </div>
         <div className="pt-1 md:pt-2">
@@ -336,16 +348,16 @@ const VisibilityVoid = () => {
       {/* Info at top */}
       <div className="flex flex-col gap-2 z-20 mt-2">
         <h3 className="text-xl font-bold font-aspekta text-gray-900 dark:text-gray-100">
-          Strategic View 
+          Credits Monitoring 
         </h3>
         <p className="text-gray-500 font-geist text-sm leading-relaxed">
-          Decision makers gain clarity through centralized data for tracking results and domain attainment
+          Always up-to-date information on AI generation credits, current usage and balance across all your institutional projects.
         </p>
       </div>
 
       {/* Partial Image Preview at bottom */}
-      <div className="relative h-1/2 w-[120%] -ml-4 -mb-12">
-        <div className="absolute -top-14 left-20 w-[180%] h-[180%] origin-top-left scale-[0.5]">
+      <div className="relative h-1/2 w-[140%] md:w-[120%] -ml-8 md:-ml-4 -mb-16 md:-mb-12">
+        <div className="absolute -top-20 left-10 md:-top-14 md:left-20 w-[180%] h-[180%] origin-top-left scale-[0.85] md:scale-[0.5]">
           <Image 
             src="/img/overview.png" 
             alt="Institution Overview" 
@@ -384,11 +396,12 @@ const features = [
   },
   {
     Icon: () => null,
-    name: "Unified Sync",
-    description: "Connect every business tool and synchronize data across your entire institution",
+    name: "",
+    description: "",
     href: "#",
     cta: "",
-    className: "col-span-3 lg:col-span-2",
+    className: "hidden lg:flex col-span-3 lg:col-span-2",
+    accents: false,
     background: (
       <div className="absolute inset-0 z-0">
         <IntegrationsDemo />
@@ -412,7 +425,10 @@ export function BentoDemo() {
       <div className="container mx-auto px-8">
         <SectionHeader 
           title="Education Planning is Still Manual and Fragmented"
-          description="Traditional methods are slowing down your institution. TechPlan bridges the gap between manual chaos and digital excellence."
+          description={[
+            "Traditional methods are slowing down your institution. TechPlan bridges the",
+            "gap between manual chaos and digital excellence."
+          ]}
         />
         
         <BentoGrid className="max-w-7xl mx-auto">

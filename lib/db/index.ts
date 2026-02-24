@@ -8,5 +8,8 @@ if (!process.env.DATABASE_URL) {
 }
 
 // For query purposes
-const client = postgres(process.env.DATABASE_URL);
+const client = postgres(process.env.DATABASE_URL, { 
+  prepare: false,
+  connect_timeout: 10,
+});
 export const db = drizzle(client, { schema });

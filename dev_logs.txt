@@ -1,0 +1,47 @@
+
+> tedu@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.18.74:3000
+- Environments: .env
+
+✓ Starting...
+⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 2.2s
+○ Compiling /sign-in ...
+ GET /sign-in 200 in 8.3s (compile: 7.6s, render: 657ms)
+✓ Compiled in 215ms
+○ Compiling /dashboard ...
+ GET /dashboard 200 in 9.5s (compile: 8.8s, proxy.ts: 151ms, render: 552ms)
+ GET /dashboard 200 in 234ms (compile: 15ms, proxy.ts: 11ms, render: 209ms)
+ GET /dashboard 200 in 250ms (compile: 12ms, proxy.ts: 17ms, render: 221ms)
+[2m2026-02-23T16:28:07.104Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET should be at least 32 characters long for adequate security. Generate one with `npx @better-auth/cli secret` or `openssl rand -base64 32`.
+[2m2026-02-23T16:28:07.110Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET appears low-entropy. Use a randomly generated secret for production.
+○ Compiling /api/auth/[...all] ...
+[2m2026-02-23T16:28:10.225Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET should be at least 32 characters long for adequate security. Generate one with `npx @better-auth/cli secret` or `openssl rand -base64 32`.
+[2m2026-02-23T16:28:10.231Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET appears low-entropy. Use a randomly generated secret for production.
+ POST /dashboard 200 in 4.8s (compile: 23ms, proxy.ts: 20ms, render: 4.8s)
+[2m2026-02-23T16:28:12.165Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET should be at least 32 characters long for adequate security. Generate one with `npx @better-auth/cli secret` or `openssl rand -base64 32`.
+[2m2026-02-23T16:28:12.172Z[0m [33mWARN[0m [1m[Better Auth]:[0m [better-auth] Warning: your BETTER_AUTH_SECRET appears low-entropy. Use a randomly generated secret for production.
+ POST /dashboard 200 in 1423ms (compile: 182ms, proxy.ts: 25ms, render: 1217ms)
+ POST /dashboard 200 in 1212ms (compile: 119ms, proxy.ts: 18ms, render: 1075ms)
+ GET /api/auth/get-session 200 in 9.2s (compile: 7.5s, render: 1613ms)
+ POST /dashboard 200 in 1870ms (compile: 120ms, proxy.ts: 12ms, render: 1738ms)
+ POST /dashboard 200 in 1602ms (compile: 185ms, proxy.ts: 14ms, render: 1403ms)
+ POST /dashboard 200 in 1334ms (compile: 134ms, proxy.ts: 15ms, render: 1185ms)
+ GET / 200 in 2.9s (compile: 2.4s, render: 534ms)
+ POST /dashboard 200 in 1061ms (compile: 137ms, proxy.ts: 17ms, render: 907ms)
+⨯ Error: aborted
+    at ignore-listed frames {
+  code: 'ECONNRESET',
+  digest: '3419021255'
+}
+ GET / 200 in 545ms (compile: 15ms, render: 530ms)
+ GET / 200 in 47ms (compile: 9ms, render: 38ms)
+ GET / 200 in 377ms (compile: 8ms, render: 369ms)
+ GET / 200 in 401ms (compile: 8ms, render: 394ms)
+ GET / 200 in 518ms (compile: 19ms, render: 498ms)
+ GET / 200 in 458ms (compile: 10ms, render: 448ms)

@@ -63,7 +63,10 @@ export default function Integrations() {
       <div className="container mx-auto px-6 md:px-8 relative z-30">
         <SectionHeader 
           title="Connect Your Entire Institution"
-          description="TechPlan integrates with the tools you already use, creating a seamless data flow across your campus."
+          description={[
+            "TechPlan integrates with the tools you already use, creating a",
+            "seamless data flow across your entire institutional ecosystem."
+          ]}
         />
       </div>
 

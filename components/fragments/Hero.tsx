@@ -9,20 +9,23 @@ export default function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
+        staggerChildren: 0.12,
+        delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 1,
-        ease: [0.16, 1, 0.3, 1] as const,
+        type: "spring" as const,
+        stiffness: 100,
+        damping: 20,
+        mass: 1,
+        bounce: 0,
       },
     },
   };
@@ -59,20 +62,14 @@ export default function Hero() {
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[55%] to-[#3A96F6] bg-clip-text text-transparent pb-1"
           >
-            Improve Learning
-          </motion.span>
-          <motion.span 
-            variants={itemVariants}
-            className="bg-gradient-to-r from-black from-[60%] to-[#3A96F6] bg-clip-text text-transparent pb-1"
-          >
-            Flow.
+            Improve Learning <br className="lg:hidden" /> Flow.
           </motion.span>
         </h1>
         
         {/* Subheadline */}
         <motion.p 
           variants={itemVariants}
-          className="hero-subtitle text-lg sm:text-xl md:text-[1.25rem] text-gray-600 max-w-[800px] mx-auto mb-10 leading-relaxed font-geist"
+          className="hero-subtitle text-base sm:text-lg md:text-xl text-gray-600 max-w-[800px] mx-auto mb-10 leading-relaxed font-geist"
         >
           An intelligent platform for curriculum engineering, smart scheduling, and learning progress monitoring — built for modern education and training.
         </motion.p>
@@ -80,12 +77,18 @@ export default function Hero() {
         {/* CTA Buttons */}
         <motion.div 
           variants={itemVariants}
-          className="hero-btns flex justify-center mb-20"
+          className="hero-btns flex justify-center mb-20 px-4"
         >
-          <Link href="#features" className="group relative btn-primary bg-black text-white px-8 py-3.5 rounded-full font-bold text-base hover:bg-zinc-900 transition-all shadow-[0_15px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.15)] hover:scale-105 active:scale-95 font-geist inline-flex items-center justify-center">
-            <span className="relative z-10 flex items-center gap-2">
+          <Link 
+            href="#features" 
+            className="group relative bg-[#0a0a0a] text-white px-8 py-3 rounded-full font-bold text-base transition-all duration-300 shadow-[0_20px_40px_-5px_rgba(0,0,0,0.5)] hover:shadow-[0_30px_60px_-10px_rgba(0,0,0,0.6)] hover:-translate-y-1 active:scale-95 border-t border-white/10 flex items-center justify-center overflow-hidden"
+          >
+            {/* Subtle light effect from top */}
+            <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
+            
+            <span className="relative z-10">
               See More
-              <span className="transition-transform group-hover:translate-x-1">→</span>
             </span>
           </Link>
         </motion.div>

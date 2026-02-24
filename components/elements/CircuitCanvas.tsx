@@ -94,8 +94,8 @@ class Particle {
     this.wire = wire;
     this.speed = speed;
     this.progress = Math.random();
-    this.tailLength = 170;
-    this.size = 2.0;
+    this.tailLength = 140;
+    this.size = 1.8;
   }
 
   reset() {
@@ -190,8 +190,8 @@ export default function CircuitCanvas() {
       const p3 = getObjPos("obj-3");
 
       const isDesktop = canvas.width > 768;
-      const offsets = isDesktop ? [-32, 0, 32] : [-15, 0, 15];
-      const wireWidth = isDesktop ? 1.8 : 1.2;
+      const offsets = isDesktop ? [-24, 0, 24] : [-12, 0, 12];
+      const wireWidth = isDesktop ? 1.5 : 1.0;
       const stableSpeed = 0.003;
       const margin = 800;
       

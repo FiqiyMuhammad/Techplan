@@ -18,6 +18,7 @@ interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
   description: string
   href: string
   cta: string
+  accents?: boolean
 }
 
 const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
@@ -42,6 +43,7 @@ const BentoCard = ({
   description,
   href,
   cta,
+  accents = true,
   ...props
 }: BentoCardProps) => (
   <div
@@ -100,6 +102,16 @@ const BentoCard = ({
     )}
 
     <div className="pointer-events-none absolute inset-0 transform-gpu transition-all duration-300" />
+    
+    {/* Decorative corner accents */}
+    {accents && (
+      <>
+        <div className="pointer-events-none absolute -top-12 -left-12 h-40 w-40 rounded-full bg-[#D7E4FD]/20 blur-[50px] transition-all duration-500 group-hover:scale-110" />
+        <div className="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-[#D7E4FD]/20 blur-[50px] transition-all duration-500 group-hover:scale-110" />
+        <div className="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-[#D7E4FD]/20 blur-[50px] transition-all duration-500 group-hover:scale-110" />
+        <div className="pointer-events-none absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-[#D7E4FD]/20 blur-[50px] transition-all duration-500 group-hover:scale-110" />
+      </>
+    )}
   </div>
 )
 

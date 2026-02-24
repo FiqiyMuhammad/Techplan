@@ -547,19 +547,19 @@ export default function AppScriptBuilderPage() {
                                                  <SelectItem value="google" className="rounded-lg py-2 px-2 focus:bg-emerald-50 dark:focus:bg-emerald-900/20 transition-all cursor-pointer">
                                                      <div className="flex flex-col">
                                                          <span className="text-[12px] font-bold text-gray-900 dark:text-gray-100">Gemini 2.0</span>
-                                                         <span className="text-[9px] text-gray-500 font-medium">Flash Model • 10 Credits</span>
+                                                         <span className="text-[9px] text-gray-500 font-medium">Flash Model • 3 Credits</span>
                                                      </div>
                                                  </SelectItem>
                                                  <SelectItem value="groq" className="rounded-lg py-2 px-2 focus:bg-orange-50 dark:focus:bg-orange-900/20 transition-all cursor-pointer">
                                                      <div className="flex flex-col">
                                                          <span className="text-[12px] font-bold text-orange-600">Llama 3.3 Fast</span>
-                                                         <span className="text-[9px] text-gray-500 font-medium">Versatile • 5 Credits</span>
+                                                         <span className="text-[9px] text-gray-500 font-medium">Versatile • 2 Credits</span>
                                                      </div>
                                                  </SelectItem>
                                                  <SelectItem value="openrouter" className="rounded-lg py-2 px-2 focus:bg-blue-50 dark:focus:bg-blue-900/20 transition-all cursor-pointer">
                                                      <div className="flex flex-col">
                                                          <span className="text-[12px] font-bold text-blue-600">GPT-4o Premium</span>
-                                                         <span className="text-[9px] text-gray-500 font-medium">Advanced • 15 Credits</span>
+                                                         <span className="text-[9px] text-gray-500 font-medium">Advanced • 5 Credits</span>
                                                      </div>
                                                  </SelectItem>
                                              </SelectContent>

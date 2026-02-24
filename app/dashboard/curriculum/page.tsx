@@ -393,9 +393,9 @@ export default function CurriculumPage() {
                                                   className="absolute bottom-full mb-2 right-0 w-[240px] rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 shadow-2xl p-2 z-[100]"
                                               >
                                                   {[
-                                                      { id: 'google', name: 'Gemini 2.0', desc: 'Detailed • 10 Credits', color: 'text-gray-900 dark:text-gray-100', hover: 'hover:bg-blue-50/50 dark:hover:bg-blue-500/10' },
-                                                      { id: 'groq', name: 'Llama 3.3 Fast', desc: 'Efficient • 5 Credits', color: 'text-green-600 dark:text-green-400', hover: 'hover:bg-green-50/50 dark:hover:bg-green-500/10' },
-                                                      { id: 'openrouter', name: 'GPT-4o Premium', desc: 'Elite Consultant • 15 Credits', color: 'text-orange-600', hover: 'hover:bg-orange-50/50 dark:hover:bg-orange-500/10' }
+                                                      { id: 'google', name: 'Gemini 2.0', desc: 'Detailed • 3 Credits', color: 'text-gray-900 dark:text-gray-100', hover: 'hover:bg-blue-50/50 dark:hover:bg-blue-500/10' },
+                                                      { id: 'groq', name: 'Llama 3.3 Fast', desc: 'Efficient • 2 Credits', color: 'text-green-600 dark:text-green-400', hover: 'hover:bg-green-50/50 dark:hover:bg-green-500/10' },
+                                                      { id: 'openrouter', name: 'GPT-4o Premium', desc: 'Elite Consultant • 5 Credits', color: 'text-orange-600', hover: 'hover:bg-orange-50/50 dark:hover:bg-orange-500/10' }
                                                   ].map((item) => (
                                                       <div 
                                                           key={item.id}

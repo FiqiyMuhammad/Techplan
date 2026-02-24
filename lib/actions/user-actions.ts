@@ -54,16 +54,8 @@ export async function getUsageStats() {
   const userId = session.user.id;
 
   try {
-    // Parallelize all independent database queries
-    const [
-      projectCountRes,
-      docCountRes,
-      scriptCountRes,
-      subRes,
-      recentWorkflowsRes,
-      recentDocumentsRes,
-      recentScriptsRes
-    ] = await Promise.all([
+    console.log(`[UsageStats] Fetching for user: ${userId}`);
+    const results = await Promise.allSettled([
       db.select({ count: sql<number>`count(*)` }).from(workflows).where(eq(workflows.userId, userId)),
       db.select({ count: sql<number>`count(*)` }).from(documents).where(eq(documents.userId, userId)),
       db.select({ count: sql<number>`count(*)` }).from(scripts).where(eq(scripts.userId, userId)),
@@ -73,17 +65,34 @@ export async function getUsageStats() {
       db.select().from(scripts).where(eq(scripts.userId, userId)).limit(5).orderBy(sql`${scripts.createdAt} desc`)
     ]);
 
-    const projectCount = projectCountRes[0];
-    const docCount = docCountRes[0];
-    const scriptCount = scriptCountRes[0];
-    let sub = subRes[0];
+    results.forEach((res, i) => {
+        if (res.status === 'rejected') {
+            console.error(`[UsageStats] Task ${i} failed:`, res.reason);
+        }
+    });
+
+    const [
+      projectCountRes,
+      docCountRes,
+      scriptCountRes,
+      subRes,
+      recentWorkflowsRes,
+      recentDocumentsRes,
+      recentScriptsRes
+    ] = results.map(r => r.status === 'fulfilled' ? r.value : []);
+
+    const projectCount = (projectCountRes as { count: number }[])?.[0];
+    const docCount = (docCountRes as { count: number }[])?.[0];
+    const scriptCount = (scriptCountRes as { count: number }[])?.[0];
+    let sub = (subRes as typeof subscriptions.$inferSelect[])?.[0];
 
     // Auto-create subscription if not exists
     if (!sub) {
+      console.log(`[UsageStats] Creating free subscription for ${userId}`);
       const [newSub] = await db.insert(subscriptions).values({
         userId,
         plan: "FREE",
-        creditsTotal: 100,
+        creditsTotal: 20,
         creditsUsed: 0
       }).returning();
       sub = newSub;
@@ -95,9 +104,9 @@ export async function getUsageStats() {
         projects: Number(projectCount?.count || 0),
         documents: Number(docCount?.count || 0) + Number(scriptCount?.count || 0),
         subscription: sub,
-        recentWorkflows: recentWorkflowsRes.map(w => ({ id: w.id, title: w.title, type: 'workflow', createdAt: w.createdAt })),
-        recentDocuments: recentDocumentsRes.map(d => ({ id: d.id, title: d.title, type: 'document', createdAt: d.createdAt })),
-        recentScripts: recentScriptsRes.map(s => ({ id: s.id, title: s.title, type: 'script', createdAt: s.createdAt }))
+        recentWorkflows: (recentWorkflowsRes as typeof workflows.$inferSelect[]).map(w => ({ id: w.id, title: w.title, type: 'workflow', createdAt: w.createdAt })),
+        recentDocuments: (recentDocumentsRes as typeof documents.$inferSelect[]).map(d => ({ id: d.id, title: d.title, type: 'document', createdAt: d.createdAt })),
+        recentScripts: (recentScriptsRes as typeof scripts.$inferSelect[]).map(s => ({ id: s.id, title: s.title, type: 'script', createdAt: s.createdAt }))
       }
     };
   } catch (error) {
@@ -106,7 +115,7 @@ export async function getUsageStats() {
   }
 }
 
-export async function verifyAndDeductCredits(amount: number = 10) {
+export async function verifyAndDeductCredits(amount: number = 3) {
   const session = await auth.api.getSession({
     headers: await headers()
   });
@@ -122,7 +131,7 @@ export async function verifyAndDeductCredits(amount: number = 10) {
       if (!sub) {
         [sub] = await tx.insert(subscriptions).values({
           userId,
-          creditsTotal: 100,
+          creditsTotal: 20,
           creditsUsed: 0
         }).returning();
       }
@@ -200,7 +209,7 @@ export async function addCredits(amount: number) {
       if (!sub) {
         [sub] = await tx.insert(subscriptions).values({
           userId,
-          creditsTotal: 100,
+          creditsTotal: 20,
           creditsUsed: 0
         }).returning();
       }

@@ -123,67 +123,73 @@ export default function DashboardPage() {
       </motion.div>
   
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-         {/* 1. Credits Overview */}
-         <motion.div variants={itemVariants} className="lg:col-span-2 order-1 lg:order-1">
-            <CreditsUsage stats={stats} />
-         </motion.div>
+         {/* Left Column Group (lg:col-span-2) */}
+         <div className="contents lg:flex lg:flex-col lg:col-span-2 lg:gap-8 lg:space-y-0">
+            {/* 1. Credits Overview */}
+            <motion.div variants={itemVariants} className="order-1">
+               <CreditsUsage stats={stats} />
+            </motion.div>
 
-         {/* 2. Agenda Widget (Mobile: 2nd, Desktop: Right Col) */}
-         <motion.div variants={itemVariants} className="lg:col-span-1 order-2 lg:order-2">
-            <AgendaWidget />
-         </motion.div>
-
-         {/* 3. To Do List (Mobile: 3rd, Desktop: Right Col) */}
-         <motion.div variants={itemVariants} className="lg:col-span-1 order-3 lg:order-4">
-            <ToDoList />
-         </motion.div>
-  
-         {/* 4. Professional Tools (Mobile: 4th, Desktop: Left Col) */}
-         <div className="lg:col-span-2 space-y-6 order-4 lg:order-3">
-            <div className="flex items-center justify-between px-2">
-                <h2 className="text-xl font-bold font-aspekta tracking-tight text-gray-900 dark:text-white uppercase text-[11px] tracking-[0.2em] opacity-50">Professional Tools</h2>
+            {/* 4. Professional Tools */}
+            <div className="space-y-6 order-4 mt-8 lg:mt-0">
+               <div className="flex items-center justify-between px-2">
+                   <h2 className="text-xl font-bold font-aspekta tracking-tight text-gray-900 dark:text-white uppercase text-[11px] tracking-[0.2em] opacity-50">Professional Tools</h2>
+               </div>
+               <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <ActionCard 
+                       title="Curriculum" 
+                       desc="Design and structure comprehensive academic courses with AI-powered engineering." 
+                   icon={BookOpenIcon} 
+                       href="/dashboard/curriculum"
+                       color="blue"
+                   />
+                   <ActionCard 
+                       title="AppScript" 
+                       desc="Generate and deploy custom Google automations to streamline institution workflows." 
+                       icon={CommandLineIcon} 
+                       href="/dashboard/appscript-builder"
+                       color="emerald"
+                   />
+                   <ActionCard 
+                       title="Brainstorm" 
+                       desc="Unlock creativity with intelligent mind mapping and collaborative ideation canvases." 
+                       icon={SparklesIcon} 
+                       href="/dashboard/analytics"
+                       color="amber"
+                   />
+                   <ActionCard 
+                       title="Schedule" 
+                       desc="Manage your academic calendar, track sessions, and optimize your institution's timeline." 
+                       icon={CalendarIcon} 
+                       href="/dashboard/schedule"
+                       color="blue"
+                   />
+               </motion.div>
             </div>
-            <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ActionCard 
-                    title="Curriculum" 
-                    desc="Design and structure comprehensive academic courses with AI-powered engineering." 
-                    icon={BookOpenIcon} 
-                    href="/dashboard/curriculum"
-                    color="blue"
-                />
-                <ActionCard 
-                    title="AppScript" 
-                    desc="Generate and deploy custom Google automations to streamline institution workflows." 
-                    icon={CommandLineIcon} 
-                    href="/dashboard/appscript-builder"
-                    color="emerald"
-                />
-                <ActionCard 
-                    title="Brainstorm" 
-                    desc="Unlock creativity with intelligent mind mapping and collaborative ideation canvases." 
-                    icon={SparklesIcon} 
-                    href="/dashboard/analytics"
-                    color="amber"
-                />
-                <ActionCard 
-                    title="Schedule" 
-                    desc="Manage your academic calendar, track sessions, and optimize your institution's timeline." 
-                    icon={CalendarIcon} 
-                    href="/dashboard/schedule"
-                    color="blue"
-                />
+
+            {/* 6. Activity Heatmap */}
+            <motion.div variants={itemVariants} className="order-6 pt-4 lg:pt-0">
+               <ActivityHeatmap userName={firstName} />
             </motion.div>
          </div>
 
-         {/* 5. Scratchpad (Mobile: 5th, Desktop: Right Col) */}
-         <motion.div variants={itemVariants} className="lg:col-span-1 order-5 lg:order-6">
-            <Scratchpad />
-         </motion.div>
+         {/* Right Column Group (lg:col-span-1) */}
+         <div className="contents lg:flex lg:flex-col lg:col-span-1 lg:gap-8 lg:space-y-0">
+            {/* 2. Agenda Widget */}
+            <motion.div variants={itemVariants} className="order-2 mt-8 lg:mt-0">
+               <AgendaWidget />
+            </motion.div>
 
-         {/* 6. Activity Heatmap (Mobile: 6th, Desktop: Left Col) */}
-         <motion.div variants={itemVariants} className="lg:col-span-2 order-6 lg:order-5 pt-4">
-            <ActivityHeatmap userName={firstName} />
-         </motion.div>
+            {/* 3. To Do List */}
+            <motion.div variants={itemVariants} className="order-3 mt-8 lg:mt-0">
+               <ToDoList />
+            </motion.div>
+
+            {/* 5. Scratchpad */}
+            <motion.div variants={itemVariants} className="order-5 mt-8 lg:mt-0">
+               <Scratchpad />
+            </motion.div>
+         </div>
       </div>
     </motion.div>
   );

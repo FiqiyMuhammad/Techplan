@@ -69,7 +69,7 @@ export const subscriptions = pgTable("subscriptions", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: text("userId").notNull().references(() => user.id).unique(),
   plan: planEnum("plan").default("FREE"),
-  creditsTotal: integer("creditsTotal").default(10), // Default free credits
+  creditsTotal: integer("creditsTotal").default(20), // Default free credits
   creditsUsed: integer("creditsUsed").default(0),
   status: statusEnum("status").default("ACTIVE"),
   expiresAt: timestamp("expiresAt"),
