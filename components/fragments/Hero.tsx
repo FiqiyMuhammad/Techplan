@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 
 export default function Hero() {
@@ -15,7 +15,7 @@ export default function Hero() {
     },
   };
 
-  const itemVariants: any = {
+  const itemVariants: Variants = {
     hidden: { 
       opacity: 0, 
       y: 40,
@@ -41,13 +41,13 @@ export default function Hero() {
       </div>
 
       <motion.div 
-        className="container relative z-10 mx-auto px-6 md:px-8 mt-[-20px]"
+        className="container relative z-10 mx-auto px-6 md:px-8 mt-[10px]"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Headline */}
-        <h1 className="hero-title flex flex-col items-center text-center text-[1.72rem] sm:text-[3.05rem] md:text-[3.8rem] lg:text-[4.5rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-semibold font-aspekta py-2">
+        <h1 className="hero-title flex flex-col items-center text-center text-[1.72rem] sm:text-[3.05rem] md:text-[3.8rem] lg:text-[4.5rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-medium font-aspekta py-2">
           <motion.span 
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[45%] to-[#3A96F6] bg-clip-text text-transparent pb-1"

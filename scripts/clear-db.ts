@@ -1,42 +1,51 @@
+import { db } from "../lib/db";
+import { sql } from "drizzle-orm";
+import {
+  user,
+  session,
+  account,
+  verification,
+  subscriptions,
+  creditLogs,
+  schedules,
+  workflows,
+  notes,
+  documents,
+  scripts,
+  todos,
+} from "../lib/db/schema";
 
-import postgres from 'postgres';
-import * as dotenv from 'dotenv';
+async function clearDatabase() {
+  console.log("⏳ Clearing database...");
 
-dotenv.config();
-
-const sql = postgres(process.env.DATABASE_URL!);
-
-async function main() {
   try {
-    console.log("🧹 Cleaning database...");
+    // We use a raw SQL approach with CASCADE to handle foreign key dependencies easily
+    // Note: Better-Auth tables follow its own logic, but TRUNCATE CASCADE is robust.
+    
+    await db.execute(sql`
+      TRUNCATE TABLE 
+        "user", 
+        "session", 
+        "account", 
+        "verification", 
+        "subscriptions", 
+        "credit_logs", 
+        "schedules", 
+        "workflows", 
+        "notes", 
+        "documents", 
+        "scripts", 
+        "todos" 
+      CASCADE;
+    `);
 
-    // Order is important if not using CASCADE, but CASCADE is safer to ensure everything is cleared.
-    // We'll list all tables from schema.ts
-    const tables = [
-      'session',
-      'account',
-      'verification',
-      'subscriptions',
-      'credit_logs',
-      'schedules',
-      'workflows',
-      'notes',
-      'documents',
-      'scripts',
-      'user'
-    ];
-
-    for (const table of tables) {
-      console.log(`Clearing table: ${table}...`);
-      await sql.unsafe(`TRUNCATE TABLE "${table}" CASCADE;`);
-    }
-
-    console.log("✅ Database cleared successfully! Your app is now fresh and ready for new users.");
-    process.exit(0);
-  } catch (err) {
-    console.error("❌ Error clearing database:", err);
+    console.log("✅ Database cleared successfully!");
+  } catch (error) {
+    console.error("❌ Error clearing database:", error);
     process.exit(1);
+  } finally {
+    process.exit(0);
   }
 }
 
-main();
+clearDatabase();
