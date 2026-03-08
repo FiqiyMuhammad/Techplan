@@ -47,7 +47,10 @@ export default function Hero() {
         animate="visible"
       >
         {/* Headline */}
-        <h1 className="hero-title flex flex-col items-center text-center text-[1.72rem] sm:text-[3.05rem] md:text-[3.8rem] lg:text-[4.5rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-medium font-aspekta py-2">
+        <h1 
+          className="hero-title flex flex-col items-center text-center text-[1.72rem] sm:text-[3.05rem] md:text-[3.8rem] lg:text-[4.5rem] leading-tight md:leading-[1.1] mb-8 tracking-[-0.03em] font-medium font-ubuntu py-2"
+          style={{ fontFamily: 'var(--font-ubuntu), sans-serif' }}
+        >
           <motion.span 
             variants={itemVariants}
             className="bg-gradient-to-r from-black from-[45%] to-[#3A96F6] bg-clip-text text-transparent pb-1"

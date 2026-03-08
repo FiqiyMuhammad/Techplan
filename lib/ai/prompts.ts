@@ -96,6 +96,7 @@ STRICT RULES:
    c. **Strategic Table**: Provide a high-level module breakdown IN A VALID MARKDOWN TABLE format.
       - MUST include exactly one header row and one separator row (e.g., |---|---|).
       - Columns: Module/Week, Duration, Key Topics, Learning Outcomes.
+      - CRITICAL RULE: The number of rows in the Strategic Table MUST EXACTLY MATCH the total duration specified in "Alokasi Waktu" or the user's prompt. If "Alokasi Waktu" is 32 Pertemuan, the table MUST have exactly 32 rows.
    d. **Detailed Breakdown**: For EACH module in the table, provide a detailed description and activities BELOW the table.
    e. **Activity Plan (Rencana Kegiatan)**: WAJIB gunakan Markdown bullet points (format: - Item).
    f. **Assessment (Penilaian)**: WAJIB gunakan Markdown bullet points (format: - Metode).
@@ -112,10 +113,10 @@ MODE KHUSUS KURIKULUM (GEMINI OPTIMIZED):
    - **Pendahuluan:** [Isi pengantar, pecah paragraf jika panjang]
    - **Tujuan:** [Isi tujuan pembelajaran]
    - **Mata Pelajaran:** / **Mata Kuliah:** / **Materi Pelatihan:** [Pilih satu, sesuaikan konteks]
-   - **Alokasi Waktu:** [Gunakan satuan "Pertemuan". JANGAN gunakan "Minggu" atau "Bulan" di sini. Contoh: 10 Pertemuan]
+   - **Alokasi Waktu:** [Gunakan satuan "Pertemuan". Ikuti jumlah yang diminta user, misal 32 Pertemuan. Jika tidak diminta, gunakan default 10 Pertemuan]
 3. **Tabel Strategis**:
    - Gunakan heading "Tabel Strategis:".
-   - WAJIB memiliki **Minimal 8** dan **Maksimal 11** baris (pertemuan).
+   - CRITICAL RULE: Jumlah baris (pertemuan) dalam tabel WAJIB SAMA PERSIS dengan total di "Alokasi Waktu". Jika 32 Pertemuan, wajib tampilkan 32 baris!
    - Kolom WAJIB: | Pertemuan | Durasi | Topik Utama | Hasil Pembelajaran (CP) |
    - **Topik Utama (GEMINI SPECIAL):** JANGAN berikan topik tunggal. Berikan rincian topik yang mendalam dan komprehensif (minimal 3-4 sub-topik per baris, dipisahkan dengan tanda hubung '-' atau koma).
    - Gunakan penomoran "Pertemuan 1", "Pertemuan 2", dst.
@@ -153,10 +154,10 @@ MODE EFISIENSI (GROQ OPTIMIZED):
    - **Pendahuluan:** [Isi pengantar, pecah paragraf jika panjang]
    - **Tujuan:** [Isi tujuan pembelajaran]
    - **Mata Pelajaran:** / **Mata Kuliah:** / **Materi Pelatihan:** [Pilih satu, sesuaikan konteks]
-   - **Alokasi Waktu:** [Gunakan satuan "Pertemuan". JANGAN gunakan "Minggu" atau "Bulan" di sini. Contoh: 8 Pertemuan]
+   - **Alokasi Waktu:** [Gunakan satuan "Pertemuan". Ikuti jumlah yang diminta user. Jika tidak diminta, default 8 Pertemuan]
 3. **Tabel Strategis**:
    - Heading: "Tabel Strategi:".
-   - WAJIB memiliki **7 sampai 8** baris (Pertemuan). JANGAN lebih dari 8.
+   - CRITICAL RULE: Jumlah baris tabel WAJIB SAMA PERSIS dengan isi dari "Alokasi Waktu". Jika user meminta 32 pertemuan, tabel wajib memiliki 32 baris. JANGAN dipotong!
    - Kolom WAJIB: | Pertemuan | Durasi | Topik Utama | Hasil Pembelajaran (CP) |
    - Gunakan penomoran "Pertemuan 1", "Pertemuan 2", dst.
 4. **Rancangan Kegiatan**: Gunakan heading "Rancangan Kegiatan:".
@@ -185,10 +186,10 @@ MODE KONSULTAN SENIOR (GPT-4O ELITE):
    - **Pendahuluan:** [Deskripsi panjang dan inspiratif]
    - **Tujuan Pembelajaran:** [Jabarkan secara mendalam menggunakan taksonomi bloom]
    - **Mata Pelajaran:** / **Mata Kuliah:** / **Materi Pelatihan:** [Sesuai konteks]
-   - **Alokasi Waktu:** [Minimal 10 Pertemuan, sesuaikan kebutuhan]
+   - **Alokasi Waktu:** [Sesuai permintaan user, atau minimal 10 Pertemuan jika tidak dispesifikasikan]
 3. **Tabel Strategis**:
    - Heading: "Tabel Strategi:".
-   - WAJIB memiliki **Minimal 10** baris.
+   - CRITICAL RULE: Jumlah baris tabel WAJIB SAMA PERSIS dengan nilai pada "Alokasi Waktu" (misal 32 Pertemuan = wajib 32 baris di tabel).
    - Kolom WAJIB: | Pertemuan | Durasi | Topik Utama | Hasil Pembelajaran (CP) |
 4. **DETAILED BREAKDOWN (WAJIB)**:
    - Untuk setiap Pertemuan, berikan rincian materi yang sangat luas di bawah tabel.

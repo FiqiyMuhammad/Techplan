@@ -9,6 +9,7 @@
   --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-geist: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-aspekta: "Aspekta", ui-sans-serif, system-ui, sans-serif;
+  --font-ubuntu: var(--font-ubuntu), ui-sans-serif, system-ui, sans-serif;
 
   --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
   --shadow-premium-hover: 0 20px 40px -12px rgba(0, 0, 0, 0.08);

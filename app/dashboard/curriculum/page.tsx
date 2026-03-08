@@ -593,11 +593,11 @@ export default function CurriculumPage() {
                          </div>
                     </div>
 
-                    <div className="lg:col-span-3">
-                         <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-[1.3rem] shadow-2xl min-h-[850px] p-12 md:p-20 relative overflow-hidden border border-gray-100 dark:border-gray-800" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
+                    <div className="lg:col-span-3 overflow-hidden">
+                         <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-[1.3rem] shadow-2xl min-h-[850px] p-4 sm:p-6 md:p-10 lg:p-20 relative border border-gray-100 dark:border-gray-800" style={{ fontFamily: '"Segoe UI", Roboto, Helvetica, Arial, sans-serif' }}>
                              <div 
                                ref={docRef}
-                               className="max-w-3xl mx-auto font-serif leading-relaxed markdown-content prose dark:prose-invert prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-blue-500"
+                               className="max-w-3xl mx-auto font-serif leading-relaxed markdown-content prose prose-sm md:prose-base dark:prose-invert prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-blue-500 overflow-x-auto"
                              >
                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
                                      {currentCurriculum}
