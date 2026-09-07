@@ -5,6 +5,7 @@ import { user, session, account, verification } from "./db/schema";
 import { nextCookies } from "better-auth/next-js";
 
 export const auth = betterAuth({
+  secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
   database: drizzleAdapter(db, {
     // Map Drizzle schema to better-auth
