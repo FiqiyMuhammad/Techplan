@@ -71,6 +71,7 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${geist.variable} ${orbitron.variable} ${ubuntu.variable} font-inter antialiased bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300 no-scrollbar`}
       >
           <QueryProvider>

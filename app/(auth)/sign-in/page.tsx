@@ -120,10 +120,20 @@ export default function SignInPage() {
           disabled={isLoading || isGoogleLoading}
           onClick={async () => {
              setIsGoogleLoading(true);
-             await signIn.social({
-                provider: "google",
-                callbackURL: "/dashboard"
-             });
+             try {
+               await signIn.social({
+                  provider: "google",
+                  callbackURL: "/dashboard"
+               }, {
+                  onError: (ctx) => {
+                     setError(ctx.error.message || "Failed to initiate Google sign in");
+                     setIsGoogleLoading(false);
+                  }
+               });
+             } catch (err: any) {
+               setError(err?.message || "Failed to initiate Google sign in");
+               setIsGoogleLoading(false);
+             }
           }}
         >
           {isGoogleLoading ? (

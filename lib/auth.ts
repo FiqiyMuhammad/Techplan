@@ -26,16 +26,20 @@ export const auth = betterAuth({
     enabled: true
   },
   socialProviders: {
-     google: {
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        mapProfileToUser: (profile) => {
-          return {
-            firstName: profile.given_name,
-            lastName: profile.family_name,
-          };
-        },
-     }
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+      ? {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            mapProfileToUser: (profile: any) => {
+              return {
+                firstName: profile.given_name,
+                lastName: profile.family_name,
+              };
+            },
+          },
+        }
+      : {}),
   },
   plugins: [
     nextCookies(),
@@ -43,8 +47,11 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "https://tedu-sigma.vercel.app",
+    "https://techplan-seven.vercel.app",
     "https://techplan-farikhs-projects.vercel.app",
     "https://www.techplan-web.site",
-    "https://techplan-web.site"
-  ]
+    "https://techplan-web.site",
+    ...(process.env.NEXT_PUBLIC_APP_URL ? [process.env.NEXT_PUBLIC_APP_URL] : []),
+    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+  ].filter(Boolean)
 });

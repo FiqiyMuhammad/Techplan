@@ -153,10 +153,20 @@ export default function SignUpPage() {
           disabled={isLoading || isGoogleLoading}
           onClick={async () => {
              setIsGoogleLoading(true);
-             await signIn.social({
-                provider: "google",
-                callbackURL: "/dashboard"
-             });
+             try {
+               await signIn.social({
+                  provider: "google",
+                  callbackURL: "/dashboard"
+               }, {
+                  onError: (ctx) => {
+                     toast.error(ctx.error.message || "Failed to initiate Google sign in");
+                     setIsGoogleLoading(false);
+                  }
+               });
+             } catch (err: any) {
+               toast.error(err?.message || "Failed to initiate Google sign in");
+               setIsGoogleLoading(false);
+             }
           }}
         >
           {isGoogleLoading ? (
