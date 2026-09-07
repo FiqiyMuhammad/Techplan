@@ -28,6 +28,7 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.techplan-web.site"),
   title: "TechPlan | Unified Education Planning Platform",
   description: "Next-generation curriculum engineering and automated scheduling platform.",
   icons: {
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "TechPlan | Unified Education Planning Platform",
     description: "Next-generation curriculum engineering and automated scheduling platform.",
-    url: "https://tedu-sigma.vercel.app",
+    url: "https://www.techplan-web.site",
     siteName: "TechPlan",
     images: [
       {
