@@ -25,10 +25,10 @@ const plans = [
   },
   {
     name: "Pro Plan",
-    title: "IDR XX.XXX",
+    title: "IDR 65.000",
     description: "Empowering departments with advanced AI-driven coordination.",
     billing: "Billed monthly",
-    price: { monthly: 149000, yearly: 149000 },
+    price: { monthly: 65000, yearly: 65000 },
     buttonText: "Subscribe Now",
     highlight: true,
     features: [
@@ -44,10 +44,10 @@ const plans = [
   },
   {
     name: "Founder Plan",
-    title: "IDR XX.XXX",
+    title: "IDR 95.000",
     description: "The complete infrastructure for large-scale institutional transformation.",
     billing: "Billed monthly",
-    price: { monthly: 249000, yearly: 249000 },
+    price: { monthly: 95000, yearly: 95000 },
     buttonText: "Subscribe Now",
     highlight: false,
     features: [
